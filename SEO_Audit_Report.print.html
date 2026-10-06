@@ -326,7 +326,7 @@ snapshots in <code>audit-evidence/</code>. Anything that could not be measured i
 <td>Medium</td>
 </tr>
 </tbody></table>
-<p><strong>Recommendation:</strong> Run Lighthouse on <code>https://www.funngro.com/</code> (mobile + desktop). Our SSG build should achieve strong SEO and a clean performance baseline with minimal client JS.</p>
+<p><strong>Outcome:</strong> Lighthouse was run on <code>https://www.funngro.com/</code> (mobile + desktop, 2 runs each) and on the revamp (local builds, then live URLs)  --  see §6b/§6c. Both revamp pages hold SEO, Accessibility and Best Practices at 100.</p>
 <h2>6b. Lighthouse results (measured 6 Oct 2026, headless Chrome, 2 runs each)</h2>
 <p>Scores are Performance / Accessibility / Best Practices / SEO. Early revamp
 runs targeted a local production build; the live post-redeploy runs are in
@@ -774,6 +774,42 @@ Plus the new evidence from this fix pass:</p>
 <td><code>audit-evidence/revamp-verification/404-status.txt</code></td>
 <td>Unknown path returns <code>status=404</code> (no soft-404)</td>
 </tr>
+<tr>
+<td><code>audit-evidence/lighthouse/live-v2-home-mobile-1.report.json</code></td>
+<td>Live <code>/</code> mobile Lighthouse run 1</td>
+</tr>
+<tr>
+<td><code>audit-evidence/lighthouse/live-v2-home-mobile-2.report.json</code></td>
+<td>Live <code>/</code> mobile Lighthouse run 2</td>
+</tr>
+<tr>
+<td><code>audit-evidence/lighthouse/live-v2-brands-mobile-1.report.json</code></td>
+<td>Live <code>/brands</code> mobile Lighthouse run 1</td>
+</tr>
+<tr>
+<td><code>audit-evidence/lighthouse/live-v2-brands-mobile-2.report.json</code></td>
+<td>Live <code>/brands</code> mobile Lighthouse run 2</td>
+</tr>
+<tr>
+<td><code>audit-evidence/lighthouse/live-v2-home-desktop-1.report.json</code></td>
+<td>Live <code>/</code> desktop Lighthouse run 1</td>
+</tr>
+<tr>
+<td><code>audit-evidence/lighthouse/live-v2-home-desktop-2.report.json</code></td>
+<td>Live <code>/</code> desktop Lighthouse run 2</td>
+</tr>
+<tr>
+<td><code>audit-evidence/lighthouse/live-v2-brands-desktop-1.report.json</code></td>
+<td>Live <code>/brands</code> desktop Lighthouse run 1</td>
+</tr>
+<tr>
+<td><code>audit-evidence/lighthouse/live-v2-brands-desktop-2.report.json</code></td>
+<td>Live <code>/brands</code> desktop Lighthouse run 2</td>
+</tr>
+<tr>
+<td><code>audit-evidence/live-recheck/FINAL_live_results.md</code></td>
+<td>Final 17-check live pass/fail table (all PASS) + raw page bodies</td>
+</tr>
 </tbody></table>
 <h2>9b. Revamp verification table (re-run completed on live URLs  --  all PASS)</h2>
 <table>
@@ -847,8 +883,9 @@ Plus the new evidence from this fix pass:</p>
 </tbody></table>
 <h2>9c. Revamp self-audit (remaining weaknesses, honestly)</h2>
 <ul>
-<li>Mobile Performance (55-76) trails desktop (90-94); biggest lever is the
-motion runtime (~53 KiB unused-JS estimate). Below the ≥90 mobile target.</li>
+<li>Mobile Performance on live URLs (68-78) trails desktop (96-99); biggest
+lever is the motion runtime (~53 KiB unused-JS estimate). Below the ≥90
+mobile target.</li>
 <li>Lighthouse revamp runs now include live post-redeploy numbers (§6c); the
 earlier local-build numbers are kept for transparency.</li>
 <li>One weightless <code>label-content-name-mismatch</code> item remains on the logo link
@@ -862,12 +899,12 @@ correct but slightly unusual  --  documented here deliberately.</li>
 <hr>
 <h2>10. Honest Statement</h2>
 <p>This audit only reports what was measured. CrUX field data and keyword
-rankings are <strong>Not measured  --  requires test</strong>; Lighthouse lab scores above
-are measured (funngro.com live; revamp on local prod builds  --  re-run on the
-live revamp URL after redeploy). Findings reflect a point-in-time snapshot
-(6 Oct 2026). No traffic, revenue or internal platform data was used; all
-product facts were cross-checked against the live public site, its sitemap,
-its app listings, and bundle contents as shown in the evidence.</p>
+rankings are <strong>Not measured  --  requires test</strong>. Lighthouse scores for the
+revamp are measured on the live -nito-v2 URLs (§6c); earlier local-build runs
+are kept alongside for transparency. Findings reflect a point-in-time
+snapshot (6 Oct 2026). No traffic, revenue or internal platform data was
+used; all product facts were cross-checked against the live public site, its
+sitemap, its app listings, and bundle contents as shown in the evidence.</p>
 <p><strong>How to run Lighthouse (if desired):</strong></p>
 <pre><code class="language-bash">npx lighthouse https://www.funngro.com/ --preset=desktop --output=json --output=html --output-path=./audit-evidence/lh-desktop
 npx lighthouse https://www.funngro.com/ --output=json --output=html --output-path=./audit-evidence/lh-mobile

@@ -99,7 +99,7 @@ snapshots in `audit-evidence/`. Anything that could not be measured is written a
 | Render-blocking | No external Google Fonts (self-hosted via `@fontsource`). | Low |
 | Images | 19 imgs, 0 missing alt. Lazy loading by React/SPA (not server HTML lazy hints). | Medium |
 
-**Recommendation:** Run Lighthouse on `https://www.funngro.com/` (mobile + desktop). Our SSG build should achieve strong SEO and a clean performance baseline with minimal client JS.
+**Outcome:** Lighthouse was run on `https://www.funngro.com/` (mobile + desktop, 2 runs each) and on the revamp (local builds, then live URLs) — see §6b/§6c. Both revamp pages hold SEO, Accessibility and Best Practices at 100.
 
 ## 6b. Lighthouse results (measured 6 Oct 2026, headless Chrome, 2 runs each)
 
@@ -217,6 +217,15 @@ Plus the new evidence from this fix pass:
 | `audit-evidence/revamp-verification/home-head.html`, `brands-head.html` | Raw `<head>` of revamp pages (title, canonical, desc, H1, schema) |
 | `audit-evidence/revamp-verification/sitemap.xml`, `robots.txt` | Live-shape crawl files from the prod build |
 | `audit-evidence/revamp-verification/404-status.txt` | Unknown path returns `status=404` (no soft-404) |
+| `audit-evidence/lighthouse/live-v2-home-mobile-1.report.json` | Live `/` mobile Lighthouse run 1 |
+| `audit-evidence/lighthouse/live-v2-home-mobile-2.report.json` | Live `/` mobile Lighthouse run 2 |
+| `audit-evidence/lighthouse/live-v2-brands-mobile-1.report.json` | Live `/brands` mobile Lighthouse run 1 |
+| `audit-evidence/lighthouse/live-v2-brands-mobile-2.report.json` | Live `/brands` mobile Lighthouse run 2 |
+| `audit-evidence/lighthouse/live-v2-home-desktop-1.report.json` | Live `/` desktop Lighthouse run 1 |
+| `audit-evidence/lighthouse/live-v2-home-desktop-2.report.json` | Live `/` desktop Lighthouse run 2 |
+| `audit-evidence/lighthouse/live-v2-brands-desktop-1.report.json` | Live `/brands` desktop Lighthouse run 1 |
+| `audit-evidence/lighthouse/live-v2-brands-desktop-2.report.json` | Live `/brands` desktop Lighthouse run 2 |
+| `audit-evidence/live-recheck/FINAL_live_results.md` | Final 17-check live pass/fail table (all PASS) + raw page bodies |
 
 ## 9b. Revamp verification table (re-run completed on live URLs — all PASS)
 
@@ -237,8 +246,9 @@ Plus the new evidence from this fix pass:
 
 ## 9c. Revamp self-audit (remaining weaknesses, honestly)
 
-- Mobile Performance (55–76) trails desktop (90–94); biggest lever is the
-  motion runtime (~53 KiB unused-JS estimate). Below the ≥90 mobile target.
+- Mobile Performance on live URLs (68–78) trails desktop (96–99); biggest
+  lever is the motion runtime (~53 KiB unused-JS estimate). Below the ≥90
+  mobile target.
 - Lighthouse revamp runs now include live post-redeploy numbers (§6c); the
   earlier local-build numbers are kept for transparency.
 - One weightless `label-content-name-mismatch` item remains on the logo link
@@ -254,12 +264,12 @@ Plus the new evidence from this fix pass:
 ## 10. Honest Statement
 
 This audit only reports what was measured. CrUX field data and keyword
-rankings are **Not measured — requires test**; Lighthouse lab scores above
-are measured (funngro.com live; revamp on local prod builds — re-run on the
-live revamp URL after redeploy). Findings reflect a point-in-time snapshot
-(6 Oct 2026). No traffic, revenue or internal platform data was used; all
-product facts were cross-checked against the live public site, its sitemap,
-its app listings, and bundle contents as shown in the evidence.
+rankings are **Not measured — requires test**. Lighthouse scores for the
+revamp are measured on the live -nito-v2 URLs (§6c); earlier local-build runs
+are kept alongside for transparency. Findings reflect a point-in-time
+snapshot (6 Oct 2026). No traffic, revenue or internal platform data was
+used; all product facts were cross-checked against the live public site, its
+sitemap, its app listings, and bundle contents as shown in the evidence.
 
 **How to run Lighthouse (if desired):**
 
