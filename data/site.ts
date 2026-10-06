@@ -6,15 +6,28 @@
  * updating FACTS.md — that file is the project's source of truth.
  */
 
-const DEFAULT_ORIGIN = "https://funngro-revamp.vercel.app";
+const FALLBACK_ORIGIN = "https://funngro-revamp-nito-v2.vercel.app";
 
 /**
- * Canonical origin. Set NEXT_PUBLIC_SITE_URL in the deployment environment;
- * the fallback keeps local builds and metadata rendering valid.
+ * Canonical origin, resolved in priority order:
+ * NEXT_PUBLIC_SITE_ORIGIN -> NEXT_PUBLIC_SITE_URL (legacy) ->
+ * https://VERCEL_PROJECT_PRODUCTION_URL -> hard-coded live URL.
+ * Bare hostnames get an https:// prefix so metadataBase never throws.
+ * Set NEXT_PUBLIC_SITE_ORIGIN in Vercel to the live URL (with https://).
  */
-export const SITE_ORIGIN = (
-  process.env.NEXT_PUBLIC_SITE_URL ?? DEFAULT_ORIGIN
-).replace(/\/$/, "");
+function normalizeOrigin(raw: string | undefined, fallback: string): string {
+  const value = (raw ?? fallback).trim().replace(/\/$/, "");
+  return value.startsWith("http://") || value.startsWith("https://")
+    ? value
+    : `https://${value}`;
+}
+
+export const SITE_ORIGIN = normalizeOrigin(
+  process.env.NEXT_PUBLIC_SITE_ORIGIN ??
+    process.env.NEXT_PUBLIC_SITE_URL ??
+    process.env.VERCEL_PROJECT_PRODUCTION_URL,
+  FALLBACK_ORIGIN,
+);
 
 export const site = {
   name: "Funngro",
