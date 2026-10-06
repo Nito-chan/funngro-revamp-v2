@@ -266,7 +266,7 @@ export const mechanics = {
 
 export const referral = {
   eyebrow: "Referrals",
-  title: "Five hundred rupees, then five percent.",
+  title: "Five rupees, then five percent.",
   lead:
     "If someone joins with your invite and completes their first project, you earn ₹5 — and 5% of their earnings for life.",
   facts: [
