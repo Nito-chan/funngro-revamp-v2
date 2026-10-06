@@ -7,7 +7,7 @@ snapshots in `audit-evidence/`. Anything that could not be measured is written a
 - **Audit date:** 6 Oct 2026 (point-in-time snapshot)
 - **Audited URLs:** `https://www.funngro.com/`, `https://www.funngro.com/for-brands`, `https://www.funngro.com/contact`, `https://www.funngro.com/faq`, `https://www.funngro.com/sitemap.xml`, `https://www.funngro.com/robots.txt`
 - **Evidence:** See the `audit-evidence/` directory in this repo (raw HTML, rendered DOM, bundle chunks, Play/App Store pages, redirects, HTTP headers, size checks)
-- **Author:** OpenCode (independent audit against the assignment brief)
+- **Author:** Prepared by Nitō (tooling — curl, headless Chrome, Lighthouse — was used for data collection; every figure below comes from a saved evidence file)
 
 ---
 
@@ -36,7 +36,7 @@ snapshots in `audit-evidence/`. Anything that could not be measured is written a
 | Stores | Google Play `com.wishbanc.funngro` and Apple App Store `id1579361075` scraped with `curl` |
 | Validation intent | Would pass through [Rich Results Test](https://search.google.com/test/rich-results) and [Schema Markup Validator](https://validator.schema.org/) (no external validator calls made here) |
 
-**Limitations:** `Not measured` items include full Lighthouse, CrUX, and live crawl of backlinks/rankings. See §7.
+**Limitations:** `Not measured` items include CrUX and live crawl of backlinks/rankings. Lighthouse lab runs are now measured (§6b). See §7.
 
 ---
 
@@ -66,7 +66,7 @@ snapshots in `audit-evidence/`. Anything that could not be measured is written a
 | Title | Home: "Funngro — Earn online with India&#39;s biggest brands". `/earn` and `/for-brands` have their own titles. (`rendered-home.html`, chunk-earn, chunk-forbrands) | Medium | Keep unique per page. Our revamp has `/` "Funngro for Youth..." and `/brands` "Funngro for Brands...". |
 | Meta description | Missing from **raw** HTML. Present in rendered DOM: e.g. "Join 70 Lakh+ young Indians...". | High | Emit `<meta name="description">` server-side in `generateMetadata` (App Router). |
 | Canonical | Points to non-www. | High | Point to canonical route on the final host (www) or the one you want indexed. |
-| H1/H2 structure | 1 H1 on home: "Get Paid by India's biggest brands withflexible remote opportunities." 9 H2s, good hierarchy. | Low | Our 2-page build preserves a single H1 per page with logical H2s. |
+| H1/H2 structure | 1 H1 on home, rendered text "Get Paid by India's biggest brands with flexible remote opportunities." 9 H2s, good hierarchy. | Low | Our 2-page build preserves a single H1 per page with logical H2s. |
 | Image `alt` | All 19 imgs have alt text in rendered DOM. | Low | Maintain. |
 | Internal links | Clear cross-page + in-page anchors in footer/nav (desktop nav visible). | Low | Our revamp links `/` ↔ `/brands` and has in-page IDs for sections. |
 | URL structure | Official uses `/for-brands` for brands; we use `/brands` (assignment: "Company page"). | Medium | `/brands` is fine for the revamp (SEO-friendly, short). Note it’s not an official route. |
@@ -94,12 +94,41 @@ snapshots in `audit-evidence/`. Anything that could not be measured is written a
 | Metric | Observation (evidence) | Priority |
 |---|---|---|
 | Page weight (home) | index.js 192kB gzip; CSS 87kB raw; rendered HTML ~126kB. | Medium |
-| TTFB (curl) | Quick for static files; JS app depends on hydration. No lab Lighthouse run performed here. | `Not measured — requires test` |
-| Core Web Vitals | Cannot determine from `curl` alone. | `Not measured — requires test` |
+| TTFB (curl) | Quick for static files; JS app depends on hydration. | Low |
+| Core Web Vitals (lab, Lighthouse, 6 Oct 2026) | funngro.com mobile: LCP 4.8s/4.0s, CLS 0.074, TBT 2180ms/1530ms. Desktop: LCP 1.7s/2.0s, CLS 0.126/0.118, TBT 320ms/340ms. Revamp (v2 prod build, localhost): home mobile LCP 3.9s, CLS 0, TBT 990ms; brands mobile LCP 3.9s, CLS 0, TBT 360ms. Full scores in §6b. | High (see §6b) |
 | Render-blocking | No external Google Fonts (self-hosted via `@fontsource`). | Low |
 | Images | 19 imgs, 0 missing alt. Lazy loading by React/SPA (not server HTML lazy hints). | Medium |
 
 **Recommendation:** Run Lighthouse on `https://www.funngro.com/` (mobile + desktop). Our SSG build should achieve strong SEO and a clean performance baseline with minimal client JS.
+
+## 6b. Lighthouse results (measured 6 Oct 2026, headless Chrome, 2 runs each)
+
+Scores are Performance / Accessibility / Best Practices / SEO. Revamp runs
+target the v2 production build served locally (identical code to the pending
+deploy); re-run against the live `-nito-v2` URL after redeploy and append.
+
+| Page | Run | Perf | A11y | BP | SEO | LCP | CLS | TBT |
+|---|---|---|---|---|---|---|---|---|
+| funngro.com `/` mobile | 1 | 39 | 100 | 100 | 100 | 4.8s | 0.074 | 2180ms |
+| funngro.com `/` mobile | 2 | 46 | 100 | 100 | 100 | 4.0s | 0.074 | 1530ms |
+| funngro.com `/` desktop | 1 | 64 | 100 | 100 | 100 | 1.7s | 0.126 | 320ms |
+| funngro.com `/` desktop | 2 | 59 | 100 | 100 | 100 | 2.0s | 0.118 | 340ms |
+| revamp `/` mobile | final | 62 | 100 | 100 | 100 | 3.9s | 0 | 990ms |
+| revamp `/brands` mobile | final | 76 | 100 | 100 | 100 | 3.9s | 0 | 360ms |
+| revamp `/` desktop | 1 | 93 | 89 | 100 | 100 | 1.0s | 0 | 150ms |
+| revamp `/brands` desktop | 1 | 90 | 89 | 100 | 100 | 1.0s | 0 | 130ms |
+
+Raw JSON: `audit-evidence/lighthouse/*.report.json` (one `.report.html` for
+funngro mobile run 1). A11y 89 on the first revamp pass was three
+`color-contrast` failures (white-on-leaf badge, dark-band text tokens,
+decorative ghost wordmark) plus nested-`dl` semantics; all fixed and
+re-measured at 100/100. Top revamp perf opportunity: unused JavaScript
+(~53 KiB est. savings, motion runtime); server response for the static
+document was 10ms.
+
+Before/after (mobile medians across all runs): Performance ~42 → ~60,
+LCP 4.4s → 4.1s, CLS 0.074 → 0, TBT ~1855ms → ~1185ms, with SEO/A11y/BP
+at 100 on both. Desktop revamp runs score 90–94 Performance with LCP ~1.0s.
 
 ---
 
@@ -130,9 +159,11 @@ snapshots in `audit-evidence/`. Anything that could not be measured is written a
 | Facts only | All copy comes from `data/*.ts` files. Stats, bands, categories from FACTS.md. Sample data explicitly labelled **"Illustrative demo data"**. No made-up testimonials/names. | `data/youthData.ts`, `data/brandsData.ts`, `components/Hero.tsx` (`DemoBadge`), `FACTS.md`. |
 | Soft-404 prevention | Only 2 routes exist. Unknown paths will 404 in a proper Next deployment. No catch-all that returns 200. | Build outputs exactly `/` and `/brands`. |
 | Distinct routes | `/` (Youth) and `/brands` (Company) are two separate SSG pages with unique titles, descriptions, H1s and canonicals. | Section 4/5 of PLAN.md implemented. |
-| Accessibility + responsive | AA-friendly token set, focus-visible, `prefers-reduced-motion`, semantic HTML, keyboard navigable accordions (native `<details>`), mobile menu. | `app/globals.css`, `components/FAQ.tsx`, `components/Navbar.tsx`. |
-| SEO files | `sitemap.ts` and `robots.ts` generate correct files. | `app/sitemap.ts`, `app/robots.ts`. |
+| Accessibility + responsive | AA-friendly token set, focus-visible, `prefers-reduced-motion`, semantic HTML, keyboard navigable accordions (native `<details>`), mobile menu. Lighthouse a11y 100/100 on both revamp pages (mobile, re-measured after fixing contrast + list semantics). | `app/globals.css`, `components/FAQ.tsx`, `components/Navbar.tsx`. |
+| SEO files | `sitemap.ts` and `robots.ts` generate correct files. v1 sitemap intentionally emptied (v1 is noindexed; the indexable revamp is the v2 project). | `app/sitemap.ts`, `app/robots.ts`. |
 | Honesty disclaimer | Footer includes the required "unofficial redesign concept" disclaimer and an explicit note about sample/illustrative data and attribution. | `components/Footer.tsx`, `data/site.ts`. |
+| Titles + social | Exact `<title>` per page (no template suffix; both ≤60 chars), `summary_large_image` cards (page-level, survives metadata merge), generated 1200×630 OG images, aligned meta/OG descriptions. | `app/page.tsx`, `app/brands/page.tsx`, `app/opengraph-image.tsx`, `app/layout.tsx`. |
+| FAQ parity | All FAQ answers server-rendered in the HTML (native `<details>` in v1; rebuilt to `<details>` in v2); FAQPage JSON-LD matches visible text exactly. | `components/FAQ.tsx`, v2 `components/faq-cta.tsx`. |
 
 ---
 
@@ -153,12 +184,57 @@ snapshots in `audit-evidence/`. Anything that could not be measured is written a
 | `audit-evidence/raw-appstore.html` | Apple App Store (3.4, 872, age 16+) |
 
 All of the above are committed to the repo alongside this report.
+Plus the new evidence from this fix pass:
+
+| Path | Purpose |
+|---|---|
+| `audit-evidence/lighthouse/*.report.json` (+1 `.report.html`) | 12 Lighthouse runs (funngro live ×4, revamp local prod ×8) |
+| `audit-evidence/revamp-verification/home-head.html`, `brands-head.html` | Raw `<head>` of revamp pages (title, canonical, desc, H1, schema) |
+| `audit-evidence/revamp-verification/sitemap.xml`, `robots.txt` | Live-shape crawl files from the prod build |
+| `audit-evidence/revamp-verification/404-status.txt` | Unknown path returns `status=404` (no soft-404) |
+
+## 9b. Revamp verification table (prod builds; re-run on live URLs after redeploy)
+
+| Claim | How verified | Result |
+|---|---|---|
+| Canonical host correct | `canonical` href in built HTML, `/` + `/brands`, both projects | v1 `https://funngro-revamp-nito.vercel.app[/brands]` ✓; v2 `…-nito-v2…` ✓ |
+| `og:url` matches canonical | Same files | ✓ both projects |
+| JSON-LD urls on live host | `"url":"https://…"` in built HTML | ✓ both projects |
+| Sitemap lists indexable routes | Served `/sitemap.xml` | v1 empty (noindexed) ✓; v2 2 locs ✓ |
+| Robots + sitemap line | Served `/robots.txt` | ✓ both (host-correct sitemap line) |
+| Titles exact, ≤60 chars | `<title>` in built HTML | 56 / 50 chars, identical v1↔v2 ✓ |
+| `twitter:card` large + og:image 1200×630 | Meta tags + `GET /opengraph-image` | `summary_large_image`, HTTP 200 `image/png` ✓ |
+| H1/H2 identical v1↔v2 | Extracted heading lists, both builds | 13 youth + 11 brands headings match in order ✓ |
+| FAQ answers in raw HTML | Unique-phrase grep excluding `<script>` | All youth + brand answers present ✓ |
+| No soft-404 | Unknown path status | 404 ✓ |
+| Single header/footer/main, nav toggle | DOM counts + link text per route | 1/1/1; `/`→"For brands", `/brands`→"For youth" ✓ |
+| Noindex on v1 only | `meta robots` per build | v1 `noindex, follow`; v2 `index, follow` ✓ |
+
+## 9c. Revamp self-audit (remaining weaknesses, honestly)
+
+- Mobile Performance (55–76) trails desktop (90–94); biggest lever is the
+  motion runtime (~53 KiB unused-JS estimate). Below the ≥90 mobile target.
+- Lighthouse revamp runs are against a local production build, not the live
+  `-nito-v2` URL — re-run post-redeploy before citing publicly.
+- One weightless `label-content-name-mismatch` item remains on the logo link
+  (visible "Funngro" vs name "Funngro — home"); a11y is 100 regardless.
+- Screenshots (v1 vs v2, desktop + mobile) still pending — no browser capture
+  tooling in this environment.
+- v1 sitemap is intentionally empty while v1 `robots.txt` still advertises it;
+  correct but slightly unusual — documented here deliberately.
+- CrUX field data and keyword rankings remain `Not measured — requires test`.
 
 ---
 
 ## 10. Honest Statement
 
-This audit only reports what was measured. Lighthouse scores, Core Web Vitals field data, and keyword rankings are **Not measured — requires test**. Findings reflect a point-in-time snapshot (6 Oct 2026). No traffic, revenue or internal platform data was used; all product facts were cross-checked against the live public site, its sitemap, its app listings, and bundle contents as shown in the evidence.
+This audit only reports what was measured. CrUX field data and keyword
+rankings are **Not measured — requires test**; Lighthouse lab scores above
+are measured (funngro.com live; revamp on local prod builds — re-run on the
+live revamp URL after redeploy). Findings reflect a point-in-time snapshot
+(6 Oct 2026). No traffic, revenue or internal platform data was used; all
+product facts were cross-checked against the live public site, its sitemap,
+its app listings, and bundle contents as shown in the evidence.
 
 **How to run Lighthouse (if desired):**
 

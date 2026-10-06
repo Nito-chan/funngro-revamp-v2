@@ -1,0 +1,5 @@
+﻿User-Agent: *
+Allow: /
+
+Sitemap: https://funngro-revamp-nito-v2.vercel.app/sitemap.xml
+

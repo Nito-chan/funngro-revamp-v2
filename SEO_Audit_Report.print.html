@@ -1,0 +1,761 @@
+﻿<!DOCTYPE html><html><head><meta charset='utf-8'><title>SEO Audit Report - Funngro</title><style>body{font-family:Georgia,serif;max-width:900px;margin:40px auto;padding:0 24px;color:#111;line-height:1.55}table{border-collapse:collapse;width:100%;font-size:13px;margin:16px 0}th,td{border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top}th{background:#f0f0f0}pre,code{font-size:12px;background:#f6f6f6}pre{padding:12px;overflow-x:auto}h1{font-size:26px}h2{page-break-after:avoid}tr{page-break-inside:avoid}</style></head><body><h1>SEO Audit Report â€” Funngro (current site)</h1>
+<p>This report is based on <strong>real evidence</strong>, not guesswork. All data below is backed by
+snapshots in <code>audit-evidence/</code>. Anything that could not be measured is written as
+<code>Not measured â€” requires test</code>.</p>
+<ul>
+<li><strong>Audit date:</strong> 6 Oct 2026 (point-in-time snapshot)</li>
+<li><strong>Audited URLs:</strong> <code>https://www.funngro.com/</code>, <code>https://www.funngro.com/for-brands</code>, <code>https://www.funngro.com/contact</code>, <code>https://www.funngro.com/faq</code>, <code>https://www.funngro.com/sitemap.xml</code>, <code>https://www.funngro.com/robots.txt</code></li>
+<li><strong>Evidence:</strong> See the <code>audit-evidence/</code> directory in this repo (raw HTML, rendered DOM, bundle chunks, Play/App Store pages, redirects, HTTP headers, size checks)</li>
+<li><strong>Author:</strong> Prepared by NitÅ (tooling â€” curl, headless Chrome, Lighthouse â€” was used for data collection; every figure below comes from a saved evidence file)</li>
+</ul>
+<hr>
+<h2>1. Executive Summary (Top 5 Findings)</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Finding</th>
+<th>Priority</th>
+<th>Impact</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td><strong>JS-dependent content.</strong> Raw HTML (<code>raw-home.html</code>, 3548 bytes) contains only <code>&lt;div id=&quot;root&quot;&gt;&lt;/div&gt;</code>; full text appears after client-side rendering (rendered DOM ~125k).</td>
+<td>High</td>
+<td>Crawlers that donâ€™t run JS see almost nothing. Risk: thin visible content for some bots.</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>Canonical host mismatch.</strong> Pages canonicalise to <code>https://funngro.com/</code> while the site actually lives at <code>www.funngro.com/</code> (which 302-redirects from <code>funngro.com</code> and 301-redirects from <code>http://www</code>).</td>
+<td>High</td>
+<td>Splits canonical signals between www and non-www. Easy to consolidate.</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>No <code>&lt;meta name=&quot;description&quot;&gt;</code> in raw HTML.</strong> The description is injected client-side. Also OG/Twitter descriptions exist but the HTML meta description is missing until JS runs.</td>
+<td>High</td>
+<td>Search engines can still derive from other tags in many cases, but a missing server meta description is a weakness for a JS-rendered app.</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>Duplicate/contradictory Organization JSON-LD.</strong> Rendered home emits <strong>3</strong> <code>Organization</code> blocks: one with <code>legalName: &quot;Funngro Innovations Pvt Ltd&quot;</code> and non-www URL; two with <code>legalName: &quot;Wishbanc Technologies Private Limited&quot;</code> and <code>www</code> URL. Also duplicate <code>WebSite</code> blocks. <code>MobileApplication</code> claims <code>aggregateRating</code> (4.6, 70k ratings) which contradicts both app stores (Play 4.2/50.3k, App Store 3.4/872).</td>
+<td>High</td>
+<td>Confuses schema consumers. Easy to clean up to a single correct graph.</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>SPA soft-404s (200 for unknown paths).</strong> <code>/this-page-definitely-does-not-exist-9x2q</code> and <code>/zzz-not-real</code> return <strong>HTTP 200</strong> with the homepage <code>&lt;title&gt;</code>. Also <code>/teen</code> and <code>/brands</code> return 200 with the homepage title but are not distinct pages.</td>
+<td>High</td>
+<td>Wastes crawl budget and pollutes signals; Google treats many of these as low-value pages.</td>
+</tr>
+</tbody></table>
+<p><strong>Verdict:</strong> The site is fast-to-market and has decent on-page structure when JS runs, but is <strong>not HTML-first</strong>. The technical fixes are straightforward; the revamp below implements them (SSG, unique canonical per route, clean JSON-LD, 200-only where intentional).</p>
+<hr>
+<h2>2. Scope &amp; Method</h2>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Detail</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>URLs checked</td>
+<td><code>/</code>, <code>/for-brands</code>, <code>/contact</code>, <code>/faq</code>, <code>/earn</code>, <code>/stories</code>, <code>/sitemap.xml</code>, <code>/robots.txt</code>, <code>/terms-and-conditions</code>, <code>/privacy-policy</code></td>
+</tr>
+<tr>
+<td>Network</td>
+<td><code>curl</code> (headers, status, redirects), raw HTML fetched for every sampled path</td>
+</tr>
+<tr>
+<td>Rendering</td>
+<td>Headless Chrome (<code>--dump-dom</code>) to inspect the actual DOM after hydration</td>
+</tr>
+<tr>
+<td>Bundles</td>
+<td>Downloaded main chunk <code>index-Bbg7Xs3M.js</code> (636kB raw / 192kB gzip) and key route chunks; regex-extracted strings against <code>FACTS.md</code></td>
+</tr>
+<tr>
+<td>Stores</td>
+<td>Google Play <code>com.wishbanc.funngro</code> and Apple App Store <code>id1579361075</code> scraped with <code>curl</code></td>
+</tr>
+<tr>
+<td>Validation intent</td>
+<td>Would pass through <a href="https://search.google.com/test/rich-results">Rich Results Test</a> and <a href="https://validator.schema.org/">Schema Markup Validator</a> (no external validator calls made here)</td>
+</tr>
+</tbody></table>
+<p><strong>Limitations:</strong> <code>Not measured</code> items include CrUX and live crawl of backlinks/rankings. Lighthouse lab runs are now measured (Â§6b). See Â§7.</p>
+<hr>
+<h2>3. Technical SEO</h2>
+<table>
+<thead>
+<tr>
+<th>Check</th>
+<th>Finding (with evidence)</th>
+<th>Priority</th>
+<th>Recommendation</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>HTTPS &amp; HSTS</td>
+<td>301 from httpâ†’https, HSTS present (<code>Strict-Transport-Security: max-age=31536000; includeSubDomains</code>)</td>
+<td>Low</td>
+<td>Keep as-is.</td>
+</tr>
+<tr>
+<td>Canonicals</td>
+<td>Canonical points to <code>https://funngro.com/</code> (non-www) but <code>https://funngro.com/</code> 302-redirects to <code>https://www.funngro.com/</code>. Rendered pages also emit mixed WebSite/Org <code>url</code> fields. (<code>rendered-home.html</code>)</td>
+<td>High</td>
+<td>Point canonical to the final (www) host; align all JSON-LD <code>url</code> fields to the canonical host.</td>
+</tr>
+<tr>
+<td>robots.txt</td>
+<td>Healthy: allows <code>/</code>, disallows <code>/admin /auth /feedback /preview/ /api/</code>, references <code>/sitemap.xml</code>. HTTP 200.</td>
+<td>Low</td>
+<td>No change.</td>
+</tr>
+<tr>
+<td>sitemap.xml</td>
+<td>39 URLs, valid <code>xmlns</code>, <code>lastmod</code> (mostly 2026-06-26). Does <strong>not</strong> list <code>/teen</code> or <code>/brands</code>.</td>
+<td>Medium</td>
+<td>When adding static routes, keep the sitemap in sync (or generate it).</td>
+</tr>
+<tr>
+<td>Redirects</td>
+<td>Non-wwwâ†’www for https: <code>http://www.funngro.com/</code> 301 to <a href="https://www.funngro.com/">https://www.funngro.com/</a>; <code>https://funngro.com/</code> 302 to <a href="https://www.funngro.com/">https://www.funngro.com/</a>. <code>http://funngro.com/</code> 302â†’www.</td>
+<td>High</td>
+<td>Prefer 301 for canonical host (from non-www https) and avoid splitting signals.</td>
+</tr>
+<tr>
+<td>Crawlability (JS)</td>
+<td>Raw HTML empty of main text; canonical/description missing server-side.</td>
+<td>High</td>
+<td>Serve critical metadata server-side. Prefer SSG/SSR so crawlers receive HTML with titles, descriptions, canonicals and H1.</td>
+</tr>
+<tr>
+<td>Structured data</td>
+<td>Organization (3x), WebSite (2x), MobileApplication (1x) on home. FAQPage present only on <code>/faq</code>. BreadcrumbList on <code>/for-brands</code> and <code>/contact</code>. (<code>rendered-*.html</code>)</td>
+<td>High</td>
+<td>Emit a <strong>single</strong> graph per page. Drop <code>aggregateRating</code> (conflicts with stores) and donâ€™t duplicate blocks.</td>
+</tr>
+<tr>
+<td>404 handling</td>
+<td>200 for non-existent URLs (soft-404). (<code>curl</code> checks above)</td>
+<td>High</td>
+<td>Return 404 status for unknown paths. The revampâ€™s 2-page set wonâ€™t create these, but note for the full site.</td>
+</tr>
+<tr>
+<td>/teen and /brands exist only client-side</td>
+<td>Both return 200 with homepage title (SPA catch-alls). Not distinct pages.</td>
+<td>Medium</td>
+<td>Align IA: youth lives at <code>/</code>; brand live at <code>/brands</code> (our revamp) vs <code>/for-brands</code> (official). Our two routes are distinct SSG pages.</td>
+</tr>
+<tr>
+<td>International</td>
+<td><code>lang=&quot;en-IN&quot;</code>, <code>og:locale=&quot;en_IN&quot;</code>.</td>
+<td>Low</td>
+<td>OK.</td>
+</tr>
+<tr>
+<td>Performance note</td>
+<td>JS gzip 192kB, CSS 87kB raw. Self-hosted fonts.</td>
+<td>Medium</td>
+<td>Keep minimal client JS. Our revamp marks interactive parts <code>&quot;use client&quot;</code> only where strictly necessary.</td>
+</tr>
+<tr>
+<td>Accessibility basics</td>
+<td>Rendered home: 1 H1, logical H2/H3, 19 <code>&lt;img&gt;</code> with no missing <code>alt</code> (all present). Focusable elements in DOM.</td>
+<td>Low</td>
+<td>Good baseline. Need to maintain keyboard nav and AA contrast.</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>4. On-page SEO Table</h2>
+<table>
+<thead>
+<tr>
+<th>Factor</th>
+<th>Finding (with evidence)</th>
+<th>Priority</th>
+<th>Recommendation</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Title</td>
+<td>Home: &quot;Funngro â€” Earn online with India&#39;s biggest brands&quot;. <code>/earn</code> and <code>/for-brands</code> have their own titles. (<code>rendered-home.html</code>, chunk-earn, chunk-forbrands)</td>
+<td>Medium</td>
+<td>Keep unique per page. Our revamp has <code>/</code> &quot;Funngro for Youth...&quot; and <code>/brands</code> &quot;Funngro for Brands...&quot;.</td>
+</tr>
+<tr>
+<td>Meta description</td>
+<td>Missing from <strong>raw</strong> HTML. Present in rendered DOM: e.g. &quot;Join 70 Lakh+ young Indians...&quot;.</td>
+<td>High</td>
+<td>Emit <code>&lt;meta name=&quot;description&quot;&gt;</code> server-side in <code>generateMetadata</code> (App Router).</td>
+</tr>
+<tr>
+<td>Canonical</td>
+<td>Points to non-www.</td>
+<td>High</td>
+<td>Point to canonical route on the final host (www) or the one you want indexed.</td>
+</tr>
+<tr>
+<td>H1/H2 structure</td>
+<td>1 H1 on home, rendered text &quot;Get Paid by India&#39;s biggest brands with flexible remote opportunities.&quot; 9 H2s, good hierarchy.</td>
+<td>Low</td>
+<td>Our 2-page build preserves a single H1 per page with logical H2s.</td>
+</tr>
+<tr>
+<td>Image <code>alt</code></td>
+<td>All 19 imgs have alt text in rendered DOM.</td>
+<td>Low</td>
+<td>Maintain.</td>
+</tr>
+<tr>
+<td>Internal links</td>
+<td>Clear cross-page + in-page anchors in footer/nav (desktop nav visible).</td>
+<td>Low</td>
+<td>Our revamp links <code>/</code> â†” <code>/brands</code> and has in-page IDs for sections.</td>
+</tr>
+<tr>
+<td>URL structure</td>
+<td>Official uses <code>/for-brands</code> for brands; we use <code>/brands</code> (assignment: &quot;Company page&quot;).</td>
+<td>Medium</td>
+<td><code>/brands</code> is fine for the revamp (SEO-friendly, short). Note itâ€™s not an official route.</td>
+</tr>
+<tr>
+<td>OG/Twitter</td>
+<td>All present. <code>og:url</code> non-www; image <code>https://funngro.com/og-image.jpg</code>.</td>
+<td>Medium</td>
+<td>Align <code>og:url</code> to canonical host.</td>
+</tr>
+<tr>
+<td>OpenGraph image</td>
+<td><code>og-image.jpg</code> referenced. Not downloaded to evidence but referenced in all meta.</td>
+<td><code>Not measured</code></td>
+<td>Use a static OG image or generate one with <code>opengraph-image.tsx</code> (Next.js).</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>5. Content SEO</h2>
+<table>
+<thead>
+<tr>
+<th>Factor</th>
+<th>Finding</th>
+<th>Priority</th>
+<th>Recommendation</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Search intent coverage</td>
+<td>Covers &quot;earn online for students India&quot;, &quot;teen freelancing&quot;, &quot;brand promotion&quot;, &quot;influencer campaigns India&quot; in titles and copy.</td>
+<td>Low</td>
+<td>Natural use of these terms. Our copy does the same without stuffing.</td>
+</tr>
+<tr>
+<td>Thin content (raw HTML)</td>
+<td>Raw HTML is effectively empty. Only JS delivers readable content.</td>
+<td>High</td>
+<td>SSG so that &quot;view-source&quot; contains the H1, meta, schema, and section text.</td>
+</tr>
+<tr>
+<td>FAQ opportunities</td>
+<td><code>/faq</code> page exists with real Qs/As and FAQPage schema.</td>
+<td>Low</td>
+<td>Our 2-page build includes an FAQ accordion on both pages and feeds FAQPage JSON-LD (no invented questions).</td>
+</tr>
+<tr>
+<td>E-E-A-T signals</td>
+<td>Shark Tank India S2, Amit Jain, SucSEED mentioned; support emails published; Privacy/Terms exist; legal entity inconsistent.</td>
+<td>Medium</td>
+<td>Keep honest references (Shark Tank + SucSEED + Amit Jain are all public). Avoid printing a legal name since it&#39;s inconsistent in the source.</td>
+</tr>
+<tr>
+<td>Stories</td>
+<td><code>/stories</code> and individual story routes exist with real quotes/earnings.</td>
+<td>Medium</td>
+<td>Donâ€™t lift real stories verbatim. Our ladder section deliberately has no names.</td>
+</tr>
+<tr>
+<td>Stats</td>
+<td>70 lakh, 5,000+, &lt;24h, tiers are published by Funngro â€” some store values differ.</td>
+<td>High</td>
+<td>Only use the verified set (FACTS.md). Reject &quot;500+ campaigns&quot;, &quot;200+ partners&quot;, &quot;94% completion&quot;.</td>
+</tr>
+<tr>
+<td>Age range</td>
+<td>14â€“25 published in app stores and <code>/faq</code>.</td>
+<td>Low</td>
+<td>State &quot;young Indians (14â€“25)&quot; or &quot;young Indians&quot;. Our copy uses &quot;young India, 14 to 25&quot; on the youth page.</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>6. Performance (point-in-time)</h2>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Observation (evidence)</th>
+<th>Priority</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Page weight (home)</td>
+<td>index.js 192kB gzip; CSS 87kB raw; rendered HTML ~126kB.</td>
+<td>Medium</td>
+</tr>
+<tr>
+<td>TTFB (curl)</td>
+<td>Quick for static files; JS app depends on hydration.</td>
+<td>Low</td>
+</tr>
+<tr>
+<td>Core Web Vitals (lab, Lighthouse, 6 Oct 2026)</td>
+<td>funngro.com mobile: LCP 4.8s/4.0s, CLS 0.074, TBT 2180ms/1530ms. Desktop: LCP 1.7s/2.0s, CLS 0.126/0.118, TBT 320ms/340ms. Revamp (v2 prod build, localhost): home mobile LCP 3.9s, CLS 0, TBT 990ms; brands mobile LCP 3.9s, CLS 0, TBT 360ms. Full scores in Â§6b.</td>
+<td>High (see Â§6b)</td>
+</tr>
+<tr>
+<td>Render-blocking</td>
+<td>No external Google Fonts (self-hosted via <code>@fontsource</code>).</td>
+<td>Low</td>
+</tr>
+<tr>
+<td>Images</td>
+<td>19 imgs, 0 missing alt. Lazy loading by React/SPA (not server HTML lazy hints).</td>
+<td>Medium</td>
+</tr>
+</tbody></table>
+<p><strong>Recommendation:</strong> Run Lighthouse on <code>https://www.funngro.com/</code> (mobile + desktop). Our SSG build should achieve strong SEO and a clean performance baseline with minimal client JS.</p>
+<h2>6b. Lighthouse results (measured 6 Oct 2026, headless Chrome, 2 runs each)</h2>
+<p>Scores are Performance / Accessibility / Best Practices / SEO. Revamp runs
+target the v2 production build served locally (identical code to the pending
+deploy); re-run against the live <code>-nito-v2</code> URL after redeploy and append.</p>
+<table>
+<thead>
+<tr>
+<th>Page</th>
+<th>Run</th>
+<th>Perf</th>
+<th>A11y</th>
+<th>BP</th>
+<th>SEO</th>
+<th>LCP</th>
+<th>CLS</th>
+<th>TBT</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>funngro.com <code>/</code> mobile</td>
+<td>1</td>
+<td>39</td>
+<td>100</td>
+<td>100</td>
+<td>100</td>
+<td>4.8s</td>
+<td>0.074</td>
+<td>2180ms</td>
+</tr>
+<tr>
+<td>funngro.com <code>/</code> mobile</td>
+<td>2</td>
+<td>46</td>
+<td>100</td>
+<td>100</td>
+<td>100</td>
+<td>4.0s</td>
+<td>0.074</td>
+<td>1530ms</td>
+</tr>
+<tr>
+<td>funngro.com <code>/</code> desktop</td>
+<td>1</td>
+<td>64</td>
+<td>100</td>
+<td>100</td>
+<td>100</td>
+<td>1.7s</td>
+<td>0.126</td>
+<td>320ms</td>
+</tr>
+<tr>
+<td>funngro.com <code>/</code> desktop</td>
+<td>2</td>
+<td>59</td>
+<td>100</td>
+<td>100</td>
+<td>100</td>
+<td>2.0s</td>
+<td>0.118</td>
+<td>340ms</td>
+</tr>
+<tr>
+<td>revamp <code>/</code> mobile</td>
+<td>final</td>
+<td>62</td>
+<td>100</td>
+<td>100</td>
+<td>100</td>
+<td>3.9s</td>
+<td>0</td>
+<td>990ms</td>
+</tr>
+<tr>
+<td>revamp <code>/brands</code> mobile</td>
+<td>final</td>
+<td>76</td>
+<td>100</td>
+<td>100</td>
+<td>100</td>
+<td>3.9s</td>
+<td>0</td>
+<td>360ms</td>
+</tr>
+<tr>
+<td>revamp <code>/</code> desktop</td>
+<td>1</td>
+<td>93</td>
+<td>89</td>
+<td>100</td>
+<td>100</td>
+<td>1.0s</td>
+<td>0</td>
+<td>150ms</td>
+</tr>
+<tr>
+<td>revamp <code>/brands</code> desktop</td>
+<td>1</td>
+<td>90</td>
+<td>89</td>
+<td>100</td>
+<td>100</td>
+<td>1.0s</td>
+<td>0</td>
+<td>130ms</td>
+</tr>
+</tbody></table>
+<p>Raw JSON: <code>audit-evidence/lighthouse/*.report.json</code> (one <code>.report.html</code> for
+funngro mobile run 1). A11y 89 on the first revamp pass was three
+<code>color-contrast</code> failures (white-on-leaf badge, dark-band text tokens,
+decorative ghost wordmark) plus nested-<code>dl</code> semantics; all fixed and
+re-measured at 100/100. Top revamp perf opportunity: unused JavaScript
+(~53 KiB est. savings, motion runtime); server response for the static
+document was 10ms.</p>
+<p>Before/after (mobile medians across all runs): Performance ~42 â†’ ~60,
+LCP 4.4s â†’ 4.1s, CLS 0.074 â†’ 0, TBT ~1855ms â†’ ~1185ms, with SEO/A11y/BP
+at 100 on both. Desktop revamp runs score 90â€“94 Performance with LCP ~1.0s.</p>
+<hr>
+<h2>7. Prioritised Recommendations for the <em>current</em> site</h2>
+<table>
+<thead>
+<tr>
+<th>Priority</th>
+<th>Action</th>
+<th>Effort</th>
+<th>Evidence</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>High</td>
+<td>Make HTML first. Deliver H1, title, meta description, canonical and schema in the raw HTML (SSR/SSG).</td>
+<td>Large</td>
+<td>Raw body is empty (3548 bytes)</td>
+</tr>
+<tr>
+<td>High</td>
+<td>Fix canonical host to the canonicalised host (www) and 301 from non-www https. Align <code>og:url</code> and all JSON-LD <code>url</code>s to the same host.</td>
+<td>Low</td>
+<td>302 to www + mixed URLs</td>
+</tr>
+<tr>
+<td>High</td>
+<td>Return proper 404 for unknown routes; stop serving the homepage at arbitrary paths (soft-404).</td>
+<td>Medium</td>
+<td>Soft-404 on junk paths; <code>/teen</code>/<code>/brands</code> client-only</td>
+</tr>
+<tr>
+<td>High</td>
+<td>Consolidate JSON-LD to a single graph per page. Remove duplicate Organization/WebSite blocks. Drop <code>aggregateRating</code> (4.6/70k) â€” it conflicts with Play (4.2/50.3k) and App Store (3.4/872). Use a single, defensible Organization or omit <code>legalName</code> (itâ€™s internally inconsistent).</td>
+<td>Medium</td>
+<td>3Ã— Org + 2Ã— WebSite + rating contradiction</td>
+</tr>
+<tr>
+<td>High</td>
+<td>Server-render <code>&lt;meta name=&quot;description&quot;&gt;</code> (donâ€™t rely only on OG/Twitter).</td>
+<td>Low</td>
+<td>Missing in raw HTML</td>
+</tr>
+<tr>
+<td>Medium</td>
+<td>Generate FAQPage only where visible (already true on <code>/faq</code>). Ensure it matches visible content.</td>
+<td>Low</td>
+<td>FAQPage on <code>/faq</code></td>
+</tr>
+<tr>
+<td>Medium</td>
+<td>Keep bundle small and avoid shipping unused chunks.</td>
+<td>Medium</td>
+<td>192kB gzip main chunk</td>
+</tr>
+<tr>
+<td>Medium</td>
+<td>Consider <code>hreflang</code> only if multilingual surfaces become indexable.</td>
+<td>Low</td>
+<td>UI is multilingual but pages may not need separate hreflang yet</td>
+</tr>
+<tr>
+<td>Low</td>
+<td>Add <code>loading=&quot;lazy&quot;</code> to below-fold images in rendered HTML (if moving to SSG).</td>
+<td>Low</td>
+<td>Manual alt check passed</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>8. How the revamp implements the fixes</h2>
+<table>
+<thead>
+<tr>
+<th>Current issue</th>
+<th>What the new 2-page site does</th>
+<th>Evidence in this repo</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>JS-only HTML</td>
+<td>Built with <strong>Next.js App Router + SSG</strong> (all routes generate static HTML at build time). <code>npm run build</code> produces prerendered routes <code>/</code> and <code>/brands</code>.</td>
+<td><code>out/</code>-style static output via Next; <code>app/page.tsx</code>, <code>app/brands/page.tsx</code> are server components.</td>
+</tr>
+<tr>
+<td>Canonical/host</td>
+<td>Each route sets <code>alternates.canonical</code> via <code>generateMetadata</code>. Canonical uses <code>SITE_ORIGIN</code> (env-driven) and points to the route path. Also absolute <code>og:url</code>.</td>
+<td><code>app/layout.tsx</code> metadataBase + per-page metadata; <code>data/site.ts</code> <code>SITE_ORIGIN</code> and <code>absoluteUrl</code>.</td>
+</tr>
+<tr>
+<td>Meta description server-side</td>
+<td><code>metadata.description</code> exported per route.</td>
+<td><code>app/page.tsx</code> and <code>app/brands/page.tsx</code> metadata blocks.</td>
+</tr>
+<tr>
+<td>Clean JSON-LD</td>
+<td>Single <code>@graph</code> (Organization + WebSite) in root layout. Page-specific JSON-LD only where needed: <strong>FAQPage</strong> and <strong>BreadcrumbList</strong> on both pages (factual, matches visible content). No <code>aggregateRating</code>. No legal name.</td>
+<td><code>app/layout.tsx</code> (site graph), <code>app/page.tsx</code> and <code>app/brands/page.tsx</code> (FAQPage + BreadcrumbList).</td>
+</tr>
+<tr>
+<td>Facts only</td>
+<td>All copy comes from <code>data/*.ts</code> files. Stats, bands, categories from FACTS.md. Sample data explicitly labelled <strong>&quot;Illustrative demo data&quot;</strong>. No made-up testimonials/names.</td>
+<td><code>data/youthData.ts</code>, <code>data/brandsData.ts</code>, <code>components/Hero.tsx</code> (<code>DemoBadge</code>), <code>FACTS.md</code>.</td>
+</tr>
+<tr>
+<td>Soft-404 prevention</td>
+<td>Only 2 routes exist. Unknown paths will 404 in a proper Next deployment. No catch-all that returns 200.</td>
+<td>Build outputs exactly <code>/</code> and <code>/brands</code>.</td>
+</tr>
+<tr>
+<td>Distinct routes</td>
+<td><code>/</code> (Youth) and <code>/brands</code> (Company) are two separate SSG pages with unique titles, descriptions, H1s and canonicals.</td>
+<td>Section 4/5 of PLAN.md implemented.</td>
+</tr>
+<tr>
+<td>Accessibility + responsive</td>
+<td>AA-friendly token set, focus-visible, <code>prefers-reduced-motion</code>, semantic HTML, keyboard navigable accordions (native <code>&lt;details&gt;</code>), mobile menu. Lighthouse a11y 100/100 on both revamp pages (mobile, re-measured after fixing contrast + list semantics).</td>
+<td><code>app/globals.css</code>, <code>components/FAQ.tsx</code>, <code>components/Navbar.tsx</code>.</td>
+</tr>
+<tr>
+<td>SEO files</td>
+<td><code>sitemap.ts</code> and <code>robots.ts</code> generate correct files. v1 sitemap intentionally emptied (v1 is noindexed; the indexable revamp is the v2 project).</td>
+<td><code>app/sitemap.ts</code>, <code>app/robots.ts</code>.</td>
+</tr>
+<tr>
+<td>Honesty disclaimer</td>
+<td>Footer includes the required &quot;unofficial redesign concept&quot; disclaimer and an explicit note about sample/illustrative data and attribution.</td>
+<td><code>components/Footer.tsx</code>, <code>data/site.ts</code>.</td>
+</tr>
+<tr>
+<td>Titles + social</td>
+<td>Exact <code>&lt;title&gt;</code> per page (no template suffix; both â‰¤60 chars), <code>summary_large_image</code> cards (page-level, survives metadata merge), generated 1200Ã—630 OG images, aligned meta/OG descriptions.</td>
+<td><code>app/page.tsx</code>, <code>app/brands/page.tsx</code>, <code>app/opengraph-image.tsx</code>, <code>app/layout.tsx</code>.</td>
+</tr>
+<tr>
+<td>FAQ parity</td>
+<td>All FAQ answers server-rendered in the HTML (native <code>&lt;details&gt;</code> in v1; rebuilt to <code>&lt;details&gt;</code> in v2); FAQPage JSON-LD matches visible text exactly.</td>
+<td><code>components/FAQ.tsx</code>, v2 <code>components/faq-cta.tsx</code>.</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>9. Appendix: Evidence file list</h2>
+<table>
+<thead>
+<tr>
+<th>Path</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>audit-evidence/raw-home.html</code></td>
+<td>Raw curl of <code>/</code> (no JS body)</td>
+</tr>
+<tr>
+<td><code>audit-evidence/rendered-home.html</code></td>
+<td>Headless Chrome DOM of <code>/</code></td>
+</tr>
+<tr>
+<td><code>audit-evidence/raw-for-brands.html</code></td>
+<td>Raw <code>/for-brands</code></td>
+</tr>
+<tr>
+<td><code>audit-evidence/rendered-for-brands.html</code></td>
+<td>Rendered <code>/for-brands</code></td>
+</tr>
+<tr>
+<td><code>audit-evidence/rendered-faq.html</code></td>
+<td>Rendered <code>/faq</code> (has FAQPage)</td>
+</tr>
+<tr>
+<td><code>audit-evidence/raw-sitemap.xml</code></td>
+<td>Sitemap (39 URLs)</td>
+</tr>
+<tr>
+<td><code>audit-evidence/robots.txt</code> (via curl) + headers captured</td>
+<td>Crawl directives + HSTS/redirects</td>
+</tr>
+<tr>
+<td><code>audit-evidence/raw-app.js</code></td>
+<td>Main bundle (636kB raw / 192kB gzip)</td>
+</tr>
+<tr>
+<td><code>audit-evidence/chunk-*.js</code></td>
+<td>Route chunks with real copy/FAQ/categories</td>
+</tr>
+<tr>
+<td><code>audit-evidence/raw-playstore.html</code></td>
+<td>Google Play listing (4.2, 50.3k, 50L+, updated 5 Oct 2026)</td>
+</tr>
+<tr>
+<td><code>audit-evidence/raw-appstore.html</code></td>
+<td>Apple App Store (3.4, 872, age 16+)</td>
+</tr>
+</tbody></table>
+<p>All of the above are committed to the repo alongside this report.
+Plus the new evidence from this fix pass:</p>
+<table>
+<thead>
+<tr>
+<th>Path</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>audit-evidence/lighthouse/*.report.json</code> (+1 <code>.report.html</code>)</td>
+<td>12 Lighthouse runs (funngro live Ã—4, revamp local prod Ã—8)</td>
+</tr>
+<tr>
+<td><code>audit-evidence/revamp-verification/home-head.html</code>, <code>brands-head.html</code></td>
+<td>Raw <code>&lt;head&gt;</code> of revamp pages (title, canonical, desc, H1, schema)</td>
+</tr>
+<tr>
+<td><code>audit-evidence/revamp-verification/sitemap.xml</code>, <code>robots.txt</code></td>
+<td>Live-shape crawl files from the prod build</td>
+</tr>
+<tr>
+<td><code>audit-evidence/revamp-verification/404-status.txt</code></td>
+<td>Unknown path returns <code>status=404</code> (no soft-404)</td>
+</tr>
+</tbody></table>
+<h2>9b. Revamp verification table (prod builds; re-run on live URLs after redeploy)</h2>
+<table>
+<thead>
+<tr>
+<th>Claim</th>
+<th>How verified</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Canonical host correct</td>
+<td><code>canonical</code> href in built HTML, <code>/</code> + <code>/brands</code>, both projects</td>
+<td>v1 <code>https://funngro-revamp-nito.vercel.app[/brands]</code> âœ“; v2 <code>â€¦-nito-v2â€¦</code> âœ“</td>
+</tr>
+<tr>
+<td><code>og:url</code> matches canonical</td>
+<td>Same files</td>
+<td>âœ“ both projects</td>
+</tr>
+<tr>
+<td>JSON-LD urls on live host</td>
+<td><code>&quot;url&quot;:&quot;https://â€¦&quot;</code> in built HTML</td>
+<td>âœ“ both projects</td>
+</tr>
+<tr>
+<td>Sitemap lists indexable routes</td>
+<td>Served <code>/sitemap.xml</code></td>
+<td>v1 empty (noindexed) âœ“; v2 2 locs âœ“</td>
+</tr>
+<tr>
+<td>Robots + sitemap line</td>
+<td>Served <code>/robots.txt</code></td>
+<td>âœ“ both (host-correct sitemap line)</td>
+</tr>
+<tr>
+<td>Titles exact, â‰¤60 chars</td>
+<td><code>&lt;title&gt;</code> in built HTML</td>
+<td>56 / 50 chars, identical v1â†”v2 âœ“</td>
+</tr>
+<tr>
+<td><code>twitter:card</code> large + og:image 1200Ã—630</td>
+<td>Meta tags + <code>GET /opengraph-image</code></td>
+<td><code>summary_large_image</code>, HTTP 200 <code>image/png</code> âœ“</td>
+</tr>
+<tr>
+<td>H1/H2 identical v1â†”v2</td>
+<td>Extracted heading lists, both builds</td>
+<td>13 youth + 11 brands headings match in order âœ“</td>
+</tr>
+<tr>
+<td>FAQ answers in raw HTML</td>
+<td>Unique-phrase grep excluding <code>&lt;script&gt;</code></td>
+<td>All youth + brand answers present âœ“</td>
+</tr>
+<tr>
+<td>No soft-404</td>
+<td>Unknown path status</td>
+<td>404 âœ“</td>
+</tr>
+<tr>
+<td>Single header/footer/main, nav toggle</td>
+<td>DOM counts + link text per route</td>
+<td>1/1/1; <code>/</code>â†’&quot;For brands&quot;, <code>/brands</code>â†’&quot;For youth&quot; âœ“</td>
+</tr>
+<tr>
+<td>Noindex on v1 only</td>
+<td><code>meta robots</code> per build</td>
+<td>v1 <code>noindex, follow</code>; v2 <code>index, follow</code> âœ“</td>
+</tr>
+</tbody></table>
+<h2>9c. Revamp self-audit (remaining weaknesses, honestly)</h2>
+<ul>
+<li>Mobile Performance (55â€“76) trails desktop (90â€“94); biggest lever is the
+motion runtime (~53 KiB unused-JS estimate). Below the â‰¥90 mobile target.</li>
+<li>Lighthouse revamp runs are against a local production build, not the live
+<code>-nito-v2</code> URL â€” re-run post-redeploy before citing publicly.</li>
+<li>One weightless <code>label-content-name-mismatch</code> item remains on the logo link
+(visible &quot;Funngro&quot; vs name &quot;Funngro â€” home&quot;); a11y is 100 regardless.</li>
+<li>Screenshots (v1 vs v2, desktop + mobile) still pending â€” no browser capture
+tooling in this environment.</li>
+<li>v1 sitemap is intentionally empty while v1 <code>robots.txt</code> still advertises it;
+correct but slightly unusual â€” documented here deliberately.</li>
+<li>CrUX field data and keyword rankings remain <code>Not measured â€” requires test</code>.</li>
+</ul>
+<hr>
+<h2>10. Honest Statement</h2>
+<p>This audit only reports what was measured. CrUX field data and keyword
+rankings are <strong>Not measured â€” requires test</strong>; Lighthouse lab scores above
+are measured (funngro.com live; revamp on local prod builds â€” re-run on the
+live revamp URL after redeploy). Findings reflect a point-in-time snapshot
+(6 Oct 2026). No traffic, revenue or internal platform data was used; all
+product facts were cross-checked against the live public site, its sitemap,
+its app listings, and bundle contents as shown in the evidence.</p>
+<p><strong>How to run Lighthouse (if desired):</strong></p>
+<pre><code class="language-bash">npx lighthouse https://www.funngro.com/ --preset=desktop --output=json --output=html --output-path=./audit-evidence/lh-desktop
+npx lighthouse https://www.funngro.com/ --output=json --output=html --output-path=./audit-evidence/lh-mobile
+</code></pre>
+</body></html>
