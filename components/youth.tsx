@@ -104,9 +104,7 @@ export function YouthHero() {
                   aria-hidden={i >= demoActivity.length ? "true" : undefined}
                   className="flex items-center justify-between rounded-xl border border-line bg-cream/60 px-4 py-2.5 text-sm"
                 >
-                  <span className="text-muted">
-                    {row.task} · {row.city}
-                  </span>
+                  <span className="text-muted">{row.task}</span>
                   <span className="font-mono font-bold">{row.amount}</span>
                 </li>
               ))}
