@@ -444,6 +444,119 @@ document was 10ms.</p>
 <p>Before/after (mobile medians across all runs): Performance ~42 â†’ ~60,
 LCP 4.4s â†’ 4.1s, CLS 0.074 â†’ 0, TBT ~1855ms â†’ ~1185ms, with SEO/A11y/BP
 at 100 on both. Desktop revamp runs score 90â€“94 Performance with LCP ~1.0s.</p>
+<h2>6c. Live revamp results (post-redeploy, <code>funngro-revamp-nito-v2.vercel.app</code>)</h2>
+<p>Measured after both redeploys + <code>NEXT_PUBLIC_SITE_ORIGIN</code> fix. Same
+headless-Chrome method, 2 runs each. Raw JSON:
+<code>audit-evidence/lighthouse/live-v2-*.report.json</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Page</th>
+<th>Run</th>
+<th>Perf</th>
+<th>A11y</th>
+<th>BP</th>
+<th>SEO</th>
+<th>LCP</th>
+<th>CLS</th>
+<th>TBT</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>live <code>/</code> mobile</td>
+<td>1</td>
+<td>73</td>
+<td>100</td>
+<td>100</td>
+<td>100</td>
+<td>3.3s</td>
+<td>0</td>
+<td>620ms</td>
+</tr>
+<tr>
+<td>live <code>/</code> mobile</td>
+<td>2</td>
+<td>68</td>
+<td>100</td>
+<td>100</td>
+<td>100</td>
+<td>3.2s</td>
+<td>0</td>
+<td>970ms</td>
+</tr>
+<tr>
+<td>live <code>/brands</code> mobile</td>
+<td>1</td>
+<td>78</td>
+<td>100</td>
+<td>100</td>
+<td>100</td>
+<td>3.0s</td>
+<td>0</td>
+<td>640ms</td>
+</tr>
+<tr>
+<td>live <code>/brands</code> mobile</td>
+<td>2</td>
+<td>71</td>
+<td>100</td>
+<td>100</td>
+<td>100</td>
+<td>3.2s</td>
+<td>0</td>
+<td>870ms</td>
+</tr>
+<tr>
+<td>live <code>/</code> desktop</td>
+<td>1</td>
+<td>96</td>
+<td>100</td>
+<td>100</td>
+<td>100</td>
+<td>0.9s</td>
+<td>0</td>
+<td>130ms</td>
+</tr>
+<tr>
+<td>live <code>/</code> desktop</td>
+<td>2</td>
+<td>99</td>
+<td>100</td>
+<td>100</td>
+<td>100</td>
+<td>0.7s</td>
+<td>0</td>
+<td>80ms</td>
+</tr>
+<tr>
+<td>live <code>/brands</code> desktop</td>
+<td>1</td>
+<td>99</td>
+<td>100</td>
+<td>100</td>
+<td>100</td>
+<td>0.8s</td>
+<td>0</td>
+<td>30ms</td>
+</tr>
+<tr>
+<td>live <code>/brands</code> desktop</td>
+<td>2</td>
+<td>98</td>
+<td>100</td>
+<td>100</td>
+<td>100</td>
+<td>0.8s</td>
+<td>0</td>
+<td>80ms</td>
+</tr>
+</tbody></table>
+<p>Live canonical/OG/JSON-LD/sitemap table (fetched post-redeploy): v1 emits
+<code>https://funngro-revamp-nito.vercel.app[/brands]</code> with <code>noindex, follow</code>
+and an empty sitemap; v2 emits <code>https://funngro-revamp-nito-v2.vercel.app[/brands]</code>
+with <code>index, follow</code>, <code>summary_large_image</code> cards, all FAQ answers in body
+HTML, 2-route sitemap, and 404 on unknown paths. Mobile Performance (68â€“78)
+remains the one metric below the â‰¥90 target; desktop is 96â€“99.</p>
 <hr>
 <h2>7. Prioritised Recommendations for the <em>current</em> site</h2>
 <table>

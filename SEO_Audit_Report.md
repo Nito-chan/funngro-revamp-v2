@@ -130,6 +130,30 @@ Before/after (mobile medians across all runs): Performance ~42 → ~60,
 LCP 4.4s → 4.1s, CLS 0.074 → 0, TBT ~1855ms → ~1185ms, with SEO/A11y/BP
 at 100 on both. Desktop revamp runs score 90–94 Performance with LCP ~1.0s.
 
+## 6c. Live revamp results (post-redeploy, `funngro-revamp-nito-v2.vercel.app`)
+
+Measured after both redeploys + `NEXT_PUBLIC_SITE_ORIGIN` fix. Same
+headless-Chrome method, 2 runs each. Raw JSON:
+`audit-evidence/lighthouse/live-v2-*.report.json`.
+
+| Page | Run | Perf | A11y | BP | SEO | LCP | CLS | TBT |
+|---|---|---|---|---|---|---|---|---|
+| live `/` mobile | 1 | 73 | 100 | 100 | 100 | 3.3s | 0 | 620ms |
+| live `/` mobile | 2 | 68 | 100 | 100 | 100 | 3.2s | 0 | 970ms |
+| live `/brands` mobile | 1 | 78 | 100 | 100 | 100 | 3.0s | 0 | 640ms |
+| live `/brands` mobile | 2 | 71 | 100 | 100 | 100 | 3.2s | 0 | 870ms |
+| live `/` desktop | 1 | 96 | 100 | 100 | 100 | 0.9s | 0 | 130ms |
+| live `/` desktop | 2 | 99 | 100 | 100 | 100 | 0.7s | 0 | 80ms |
+| live `/brands` desktop | 1 | 99 | 100 | 100 | 100 | 0.8s | 0 | 30ms |
+| live `/brands` desktop | 2 | 98 | 100 | 100 | 100 | 0.8s | 0 | 80ms |
+
+Live canonical/OG/JSON-LD/sitemap table (fetched post-redeploy): v1 emits
+`https://funngro-revamp-nito.vercel.app[/brands]` with `noindex, follow`
+and an empty sitemap; v2 emits `https://funngro-revamp-nito-v2.vercel.app[/brands]`
+with `index, follow`, `summary_large_image` cards, all FAQ answers in body
+HTML, 2-route sitemap, and 404 on unknown paths. Mobile Performance (68–78)
+remains the one metric below the ≥90 target; desktop is 96–99.
+
 ---
 
 ## 7. Prioritised Recommendations for the *current* site
