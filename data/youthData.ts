@@ -285,7 +285,7 @@ export const trust = {
   points: [
     {
       title: "National television",
-      body: "Featured on Shark Tank India, Season 2. The pitch is on YouTube.",
+      body: "Featured on Shark Tank India, Season 2.",
     },
     {
       title: "Backed, not just bootstrapped",

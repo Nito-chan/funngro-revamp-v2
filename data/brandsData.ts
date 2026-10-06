@@ -11,7 +11,7 @@ export const hero = {
   /** The plan's H1. One per page. */
   h1: "Reach young India through campaigns powered by real people.",
   lead:
-    "Meta sells impressions. Agencies sell reach. Neither gets a 19-year-old to try your product. Funngro gets young Indians to do the thing you actually need — promote it, try it, refer a friend, or say what they think.",
+    "Meta sells impressions. Funngro pays for verified actions instead — promotion, trials, referrals and feedback from young Indians who actually use your products.",
   primaryCta: { label: "Talk to the brands team", href: "mailto:hello@funngro.com" },
   secondaryCta: { label: "See the campaign types", href: "#solutions" },
   responseNote: "hello@funngro.com — a human replies within one business day.",
@@ -334,6 +334,6 @@ export const demoDashboard = {
   metrics: [
     { label: "Reach", value: "1,42,000" },
     { label: "Verified actions", value: "9,860" },
-    { label: "CPA", value: "₹38" },
+    { label: "CPA", value: "₹42" },
   ],
 } as const;

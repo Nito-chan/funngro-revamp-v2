@@ -54,6 +54,11 @@ All raw evidence lives in `audit-evidence/`:
 | Play Store | `com.wishbanc.funngro` — 4.2 stars, 50.3K reviews, 50L+ downloads, updated 5 Oct 2026 | `raw-playstore.html` |
 | App Store | `id1579361075` — 3.4 stars, 872 ratings, Age 16+ | `raw-appstore.html` |
 | Google Play rating shown in site schema | 4.6 from 70,000 ratings | `raw-app.js` `MobileApplication` JSON-LD |
+| Growth before/after (live homepage) | Struck-through 40,000 → 70 lakh "Young Indians earning"; 170 → 5,000+ "Brand partners" | `rendered-home.html` |
+| Brands pay, earners free | "Funngro is paid by brands, not by you." Free forever, zero withdrawal fees | `chunk-faq.js` ("Is there any fee to join?"); `https://www.funngro.com/faq` |
+| UGC asset rights | "You get the asset rights. Best for ads, social libraries, e-commerce listings." | `rendered-for-brands.html`; `chunk-forbrands.js` |
+| Meta vs Funngro CPA | "Meta optimises for impressions... ₹38 CPA vs Meta's ₹117 on the same campaign" | `chunk-faq.js` brand answer; `https://www.funngro.com/faq` |
+| NOT verified — do not claim | Shark Tank pitch being on YouTube (channel `@funngro_India` exists, specific video not confirmed) | — |
 
 ### Legal entity — conflicting, do not assert a name
 
