@@ -103,9 +103,10 @@ snapshots in `audit-evidence/`. Anything that could not be measured is written a
 
 ## 6b. Lighthouse results (measured 6 Oct 2026, headless Chrome, 2 runs each)
 
-Scores are Performance / Accessibility / Best Practices / SEO. Revamp runs
-target the v2 production build served locally (identical code to the pending
-deploy); re-run against the live `-nito-v2` URL after redeploy and append.
+Scores are Performance / Accessibility / Best Practices / SEO. Early revamp
+runs targeted a local production build; the live post-redeploy runs are in
+§6c, and the full 17-check live re-verification (all PASS) is in
+`audit-evidence/live-recheck/FINAL_live_results.md`.
 
 | Page | Run | Perf | A11y | BP | SEO | LCP | CLS | TBT |
 |---|---|---|---|---|---|---|---|---|
@@ -180,7 +181,7 @@ remains the one metric below the ≥90 target; desktop is 96–99.
 | Canonical/host | Each route sets `alternates.canonical` via `generateMetadata`. Canonical uses `SITE_ORIGIN` (env-driven) and points to the route path. Also absolute `og:url`. | `app/layout.tsx` metadataBase + per-page metadata; `data/site.ts` `SITE_ORIGIN` and `absoluteUrl`. |
 | Meta description server-side | `metadata.description` exported per route. | `app/page.tsx` and `app/brands/page.tsx` metadata blocks. |
 | Clean JSON-LD | Single `@graph` (Organization + WebSite) in root layout. Page-specific JSON-LD only where needed: **FAQPage** and **BreadcrumbList** on both pages (factual, matches visible content). No `aggregateRating`. No legal name. | `app/layout.tsx` (site graph), `app/page.tsx` and `app/brands/page.tsx` (FAQPage + BreadcrumbList). |
-| Facts only | All copy comes from `data/*.ts` files. Stats, bands, categories from FACTS.md. Sample data explicitly labelled **"Illustrative demo data"**. No made-up testimonials/names. | `data/youthData.ts`, `data/brandsData.ts`, `components/Hero.tsx` (`DemoBadge`), `FACTS.md`. |
+| Facts only | All copy comes from `data/*.ts` files. Stats, bands, categories from FACTS.md. Sample data explicitly labelled **"Illustrative demo data"**. No made-up testimonials/names. The brands demo panel's CPA is an obvious sample value, never a real published stat (rescanned). | `data/youthData.ts`, `data/brandsData.ts`, `components/Hero.tsx` (`DemoBadge`), `FACTS.md`. |
 | Soft-404 prevention | Only 2 routes exist. Unknown paths will 404 in a proper Next deployment. No catch-all that returns 200. | Build outputs exactly `/` and `/brands`. |
 | Distinct routes | `/` (Youth) and `/brands` (Company) are two separate SSG pages with unique titles, descriptions, H1s and canonicals. | Section 4/5 of PLAN.md implemented. |
 | Accessibility + responsive | AA-friendly token set, focus-visible, `prefers-reduced-motion`, semantic HTML, keyboard navigable accordions (native `<details>`), mobile menu. Lighthouse a11y 100/100 on both revamp pages (mobile, re-measured after fixing contrast + list semantics). | `app/globals.css`, `components/FAQ.tsx`, `components/Navbar.tsx`. |
@@ -217,7 +218,7 @@ Plus the new evidence from this fix pass:
 | `audit-evidence/revamp-verification/sitemap.xml`, `robots.txt` | Live-shape crawl files from the prod build |
 | `audit-evidence/revamp-verification/404-status.txt` | Unknown path returns `status=404` (no soft-404) |
 
-## 9b. Revamp verification table (prod builds; re-run on live URLs after redeploy)
+## 9b. Revamp verification table (re-run completed on live URLs — all PASS)
 
 | Claim | How verified | Result |
 |---|---|---|
@@ -238,8 +239,8 @@ Plus the new evidence from this fix pass:
 
 - Mobile Performance (55–76) trails desktop (90–94); biggest lever is the
   motion runtime (~53 KiB unused-JS estimate). Below the ≥90 mobile target.
-- Lighthouse revamp runs are against a local production build, not the live
-  `-nito-v2` URL — re-run post-redeploy before citing publicly.
+- Lighthouse revamp runs now include live post-redeploy numbers (§6c); the
+  earlier local-build numbers are kept for transparency.
 - One weightless `label-content-name-mismatch` item remains on the logo link
   (visible "Funngro" vs name "Funngro — home"); a11y is 100 regardless.
 - Screenshots (v1 vs v2, desktop + mobile) still pending — no browser capture

@@ -1,12 +1,12 @@
-﻿<!DOCTYPE html><html><head><meta charset='utf-8'><title>SEO Audit Report - Funngro</title><style>body{font-family:Georgia,serif;max-width:900px;margin:40px auto;padding:0 24px;color:#111;line-height:1.55}table{border-collapse:collapse;width:100%;font-size:13px;margin:16px 0}th,td{border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top}th{background:#f0f0f0}pre,code{font-size:12px;background:#f6f6f6}pre{padding:12px;overflow-x:auto}h1{font-size:26px}h2{page-break-after:avoid}tr{page-break-inside:avoid}</style></head><body><h1>SEO Audit Report â€” Funngro (current site)</h1>
+<!DOCTYPE html><html><head><meta charset='utf-8'><title>SEO Audit Report - Funngro</title><style>body{font-family:Arial,Helvetica,sans-serif;max-width:900px;margin:40px auto;padding:0 24px;color:#111;line-height:1.55}table{border-collapse:collapse;width:100%;font-size:13px;margin:16px 0}th,td{border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top}th{background:#f0f0f0}pre,code{font-size:12px}pre{padding:12px;overflow-x:auto;background:#f6f6f6}h1{font-size:26px}h2{page-break-after:avoid}tr{page-break-inside:avoid}</style></head><body><h1>SEO Audit Report  --  Funngro (current site)</h1>
 <p>This report is based on <strong>real evidence</strong>, not guesswork. All data below is backed by
 snapshots in <code>audit-evidence/</code>. Anything that could not be measured is written as
-<code>Not measured â€” requires test</code>.</p>
+<code>Not measured  --  requires test</code>.</p>
 <ul>
 <li><strong>Audit date:</strong> 6 Oct 2026 (point-in-time snapshot)</li>
 <li><strong>Audited URLs:</strong> <code>https://www.funngro.com/</code>, <code>https://www.funngro.com/for-brands</code>, <code>https://www.funngro.com/contact</code>, <code>https://www.funngro.com/faq</code>, <code>https://www.funngro.com/sitemap.xml</code>, <code>https://www.funngro.com/robots.txt</code></li>
 <li><strong>Evidence:</strong> See the <code>audit-evidence/</code> directory in this repo (raw HTML, rendered DOM, bundle chunks, Play/App Store pages, redirects, HTTP headers, size checks)</li>
-<li><strong>Author:</strong> Prepared by NitÅ (tooling â€” curl, headless Chrome, Lighthouse â€” was used for data collection; every figure below comes from a saved evidence file)</li>
+<li><strong>Author:</strong> Prepared by Nito (tooling  --  curl, headless Chrome, Lighthouse  --  was used for data collection; every figure below comes from a saved evidence file)</li>
 </ul>
 <hr>
 <h2>1. Executive Summary (Top 5 Findings)</h2>
@@ -23,7 +23,7 @@ snapshots in <code>audit-evidence/</code>. Anything that could not be measured i
 <td>1</td>
 <td><strong>JS-dependent content.</strong> Raw HTML (<code>raw-home.html</code>, 3548 bytes) contains only <code>&lt;div id=&quot;root&quot;&gt;&lt;/div&gt;</code>; full text appears after client-side rendering (rendered DOM ~125k).</td>
 <td>High</td>
-<td>Crawlers that donâ€™t run JS see almost nothing. Risk: thin visible content for some bots.</td>
+<td>Crawlers that don't run JS see almost nothing. Risk: thin visible content for some bots.</td>
 </tr>
 <tr>
 <td>2</td>
@@ -85,7 +85,7 @@ snapshots in <code>audit-evidence/</code>. Anything that could not be measured i
 <td>Would pass through <a href="https://search.google.com/test/rich-results">Rich Results Test</a> and <a href="https://validator.schema.org/">Schema Markup Validator</a> (no external validator calls made here)</td>
 </tr>
 </tbody></table>
-<p><strong>Limitations:</strong> <code>Not measured</code> items include CrUX and live crawl of backlinks/rankings. Lighthouse lab runs are now measured (Â§6b). See Â§7.</p>
+<p><strong>Limitations:</strong> <code>Not measured</code> items include CrUX and live crawl of backlinks/rankings. Lighthouse lab runs are now measured (§6b). See §7.</p>
 <hr>
 <h2>3. Technical SEO</h2>
 <table>
@@ -99,7 +99,7 @@ snapshots in <code>audit-evidence/</code>. Anything that could not be measured i
 </thead>
 <tbody><tr>
 <td>HTTPS &amp; HSTS</td>
-<td>301 from httpâ†’https, HSTS present (<code>Strict-Transport-Security: max-age=31536000; includeSubDomains</code>)</td>
+<td>301 from http→https, HSTS present (<code>Strict-Transport-Security: max-age=31536000; includeSubDomains</code>)</td>
 <td>Low</td>
 <td>Keep as-is.</td>
 </tr>
@@ -123,7 +123,7 @@ snapshots in <code>audit-evidence/</code>. Anything that could not be measured i
 </tr>
 <tr>
 <td>Redirects</td>
-<td>Non-wwwâ†’www for https: <code>http://www.funngro.com/</code> 301 to <a href="https://www.funngro.com/">https://www.funngro.com/</a>; <code>https://funngro.com/</code> 302 to <a href="https://www.funngro.com/">https://www.funngro.com/</a>. <code>http://funngro.com/</code> 302â†’www.</td>
+<td>Non-www→www for https: <code>http://www.funngro.com/</code> 301 to <a href="https://www.funngro.com/">https://www.funngro.com/</a>; <code>https://funngro.com/</code> 302 to <a href="https://www.funngro.com/">https://www.funngro.com/</a>. <code>http://funngro.com/</code> 302→www.</td>
 <td>High</td>
 <td>Prefer 301 for canonical host (from non-www https) and avoid splitting signals.</td>
 </tr>
@@ -137,13 +137,13 @@ snapshots in <code>audit-evidence/</code>. Anything that could not be measured i
 <td>Structured data</td>
 <td>Organization (3x), WebSite (2x), MobileApplication (1x) on home. FAQPage present only on <code>/faq</code>. BreadcrumbList on <code>/for-brands</code> and <code>/contact</code>. (<code>rendered-*.html</code>)</td>
 <td>High</td>
-<td>Emit a <strong>single</strong> graph per page. Drop <code>aggregateRating</code> (conflicts with stores) and donâ€™t duplicate blocks.</td>
+<td>Emit a <strong>single</strong> graph per page. Drop <code>aggregateRating</code> (conflicts with stores) and don't duplicate blocks.</td>
 </tr>
 <tr>
 <td>404 handling</td>
 <td>200 for non-existent URLs (soft-404). (<code>curl</code> checks above)</td>
 <td>High</td>
-<td>Return 404 status for unknown paths. The revampâ€™s 2-page set wonâ€™t create these, but note for the full site.</td>
+<td>Return 404 status for unknown paths. The revamp's 2-page set won't create these, but note for the full site.</td>
 </tr>
 <tr>
 <td>/teen and /brands exist only client-side</td>
@@ -183,7 +183,7 @@ snapshots in <code>audit-evidence/</code>. Anything that could not be measured i
 </thead>
 <tbody><tr>
 <td>Title</td>
-<td>Home: &quot;Funngro â€” Earn online with India&#39;s biggest brands&quot;. <code>/earn</code> and <code>/for-brands</code> have their own titles. (<code>rendered-home.html</code>, chunk-earn, chunk-forbrands)</td>
+<td>Home: &quot;Funngro  --  Earn online with India&#39;s biggest brands&quot;. <code>/earn</code> and <code>/for-brands</code> have their own titles. (<code>rendered-home.html</code>, chunk-earn, chunk-forbrands)</td>
 <td>Medium</td>
 <td>Keep unique per page. Our revamp has <code>/</code> &quot;Funngro for Youth...&quot; and <code>/brands</code> &quot;Funngro for Brands...&quot;.</td>
 </tr>
@@ -215,13 +215,13 @@ snapshots in <code>audit-evidence/</code>. Anything that could not be measured i
 <td>Internal links</td>
 <td>Clear cross-page + in-page anchors in footer/nav (desktop nav visible).</td>
 <td>Low</td>
-<td>Our revamp links <code>/</code> â†” <code>/brands</code> and has in-page IDs for sections.</td>
+<td>Our revamp links <code>/</code> ↔ <code>/brands</code> and has in-page IDs for sections.</td>
 </tr>
 <tr>
 <td>URL structure</td>
 <td>Official uses <code>/for-brands</code> for brands; we use <code>/brands</code> (assignment: &quot;Company page&quot;).</td>
 <td>Medium</td>
-<td><code>/brands</code> is fine for the revamp (SEO-friendly, short). Note itâ€™s not an official route.</td>
+<td><code>/brands</code> is fine for the revamp (SEO-friendly, short). Note it's not an official route.</td>
 </tr>
 <tr>
 <td>OG/Twitter</td>
@@ -275,19 +275,19 @@ snapshots in <code>audit-evidence/</code>. Anything that could not be measured i
 <td>Stories</td>
 <td><code>/stories</code> and individual story routes exist with real quotes/earnings.</td>
 <td>Medium</td>
-<td>Donâ€™t lift real stories verbatim. Our ladder section deliberately has no names.</td>
+<td>Don't lift real stories verbatim. Our ladder section deliberately has no names.</td>
 </tr>
 <tr>
 <td>Stats</td>
-<td>70 lakh, 5,000+, &lt;24h, tiers are published by Funngro â€” some store values differ.</td>
+<td>70 lakh, 5,000+, &lt;24h, tiers are published by Funngro  --  some store values differ.</td>
 <td>High</td>
 <td>Only use the verified set (FACTS.md). Reject &quot;500+ campaigns&quot;, &quot;200+ partners&quot;, &quot;94% completion&quot;.</td>
 </tr>
 <tr>
 <td>Age range</td>
-<td>14â€“25 published in app stores and <code>/faq</code>.</td>
+<td>14-25 published in app stores and <code>/faq</code>.</td>
 <td>Low</td>
-<td>State &quot;young Indians (14â€“25)&quot; or &quot;young Indians&quot;. Our copy uses &quot;young India, 14 to 25&quot; on the youth page.</td>
+<td>State &quot;young Indians (14-25)&quot; or &quot;young Indians&quot;. Our copy uses &quot;young India, 14 to 25&quot; on the youth page.</td>
 </tr>
 </tbody></table>
 <hr>
@@ -312,8 +312,8 @@ snapshots in <code>audit-evidence/</code>. Anything that could not be measured i
 </tr>
 <tr>
 <td>Core Web Vitals (lab, Lighthouse, 6 Oct 2026)</td>
-<td>funngro.com mobile: LCP 4.8s/4.0s, CLS 0.074, TBT 2180ms/1530ms. Desktop: LCP 1.7s/2.0s, CLS 0.126/0.118, TBT 320ms/340ms. Revamp (v2 prod build, localhost): home mobile LCP 3.9s, CLS 0, TBT 990ms; brands mobile LCP 3.9s, CLS 0, TBT 360ms. Full scores in Â§6b.</td>
-<td>High (see Â§6b)</td>
+<td>funngro.com mobile: LCP 4.8s/4.0s, CLS 0.074, TBT 2180ms/1530ms. Desktop: LCP 1.7s/2.0s, CLS 0.126/0.118, TBT 320ms/340ms. Revamp (v2 prod build, localhost): home mobile LCP 3.9s, CLS 0, TBT 990ms; brands mobile LCP 3.9s, CLS 0, TBT 360ms. Full scores in §6b.</td>
+<td>High (see §6b)</td>
 </tr>
 <tr>
 <td>Render-blocking</td>
@@ -328,9 +328,10 @@ snapshots in <code>audit-evidence/</code>. Anything that could not be measured i
 </tbody></table>
 <p><strong>Recommendation:</strong> Run Lighthouse on <code>https://www.funngro.com/</code> (mobile + desktop). Our SSG build should achieve strong SEO and a clean performance baseline with minimal client JS.</p>
 <h2>6b. Lighthouse results (measured 6 Oct 2026, headless Chrome, 2 runs each)</h2>
-<p>Scores are Performance / Accessibility / Best Practices / SEO. Revamp runs
-target the v2 production build served locally (identical code to the pending
-deploy); re-run against the live <code>-nito-v2</code> URL after redeploy and append.</p>
+<p>Scores are Performance / Accessibility / Best Practices / SEO. Early revamp
+runs targeted a local production build; the live post-redeploy runs are in
+§6c, and the full 17-check live re-verification (all PASS) is in
+<code>audit-evidence/live-recheck/FINAL_live_results.md</code>.</p>
 <table>
 <thead>
 <tr>
@@ -441,9 +442,9 @@ decorative ghost wordmark) plus nested-<code>dl</code> semantics; all fixed and
 re-measured at 100/100. Top revamp perf opportunity: unused JavaScript
 (~53 KiB est. savings, motion runtime); server response for the static
 document was 10ms.</p>
-<p>Before/after (mobile medians across all runs): Performance ~42 â†’ ~60,
-LCP 4.4s â†’ 4.1s, CLS 0.074 â†’ 0, TBT ~1855ms â†’ ~1185ms, with SEO/A11y/BP
-at 100 on both. Desktop revamp runs score 90â€“94 Performance with LCP ~1.0s.</p>
+<p>Before/after (mobile medians across all runs): Performance ~42 → ~60,
+LCP 4.4s → 4.1s, CLS 0.074 → 0, TBT ~1855ms → ~1185ms, with SEO/A11y/BP
+at 100 on both. Desktop revamp runs score 90-94 Performance with LCP ~1.0s.</p>
 <h2>6c. Live revamp results (post-redeploy, <code>funngro-revamp-nito-v2.vercel.app</code>)</h2>
 <p>Measured after both redeploys + <code>NEXT_PUBLIC_SITE_ORIGIN</code> fix. Same
 headless-Chrome method, 2 runs each. Raw JSON:
@@ -555,8 +556,8 @@ headless-Chrome method, 2 runs each. Raw JSON:
 <code>https://funngro-revamp-nito.vercel.app[/brands]</code> with <code>noindex, follow</code>
 and an empty sitemap; v2 emits <code>https://funngro-revamp-nito-v2.vercel.app[/brands]</code>
 with <code>index, follow</code>, <code>summary_large_image</code> cards, all FAQ answers in body
-HTML, 2-route sitemap, and 404 on unknown paths. Mobile Performance (68â€“78)
-remains the one metric below the â‰¥90 target; desktop is 96â€“99.</p>
+HTML, 2-route sitemap, and 404 on unknown paths. Mobile Performance (68-78)
+remains the one metric below the ≥90 target; desktop is 96-99.</p>
 <hr>
 <h2>7. Prioritised Recommendations for the <em>current</em> site</h2>
 <table>
@@ -588,13 +589,13 @@ remains the one metric below the â‰¥90 target; desktop is 96â€“99.</p>
 </tr>
 <tr>
 <td>High</td>
-<td>Consolidate JSON-LD to a single graph per page. Remove duplicate Organization/WebSite blocks. Drop <code>aggregateRating</code> (4.6/70k) â€” it conflicts with Play (4.2/50.3k) and App Store (3.4/872). Use a single, defensible Organization or omit <code>legalName</code> (itâ€™s internally inconsistent).</td>
+<td>Consolidate JSON-LD to a single graph per page. Remove duplicate Organization/WebSite blocks. Drop <code>aggregateRating</code> (4.6/70k)  --  it conflicts with Play (4.2/50.3k) and App Store (3.4/872). Use a single, defensible Organization or omit <code>legalName</code> (it's internally inconsistent).</td>
 <td>Medium</td>
-<td>3Ã— Org + 2Ã— WebSite + rating contradiction</td>
+<td>3× Org + 2× WebSite + rating contradiction</td>
 </tr>
 <tr>
 <td>High</td>
-<td>Server-render <code>&lt;meta name=&quot;description&quot;&gt;</code> (donâ€™t rely only on OG/Twitter).</td>
+<td>Server-render <code>&lt;meta name=&quot;description&quot;&gt;</code> (don't rely only on OG/Twitter).</td>
 <td>Low</td>
 <td>Missing in raw HTML</td>
 </tr>
@@ -655,7 +656,7 @@ remains the one metric below the â‰¥90 target; desktop is 96â€“99.</p>
 </tr>
 <tr>
 <td>Facts only</td>
-<td>All copy comes from <code>data/*.ts</code> files. Stats, bands, categories from FACTS.md. Sample data explicitly labelled <strong>&quot;Illustrative demo data&quot;</strong>. No made-up testimonials/names.</td>
+<td>All copy comes from <code>data/*.ts</code> files. Stats, bands, categories from FACTS.md. Sample data explicitly labelled <strong>&quot;Illustrative demo data&quot;</strong>. No made-up testimonials/names. The brands demo panel&#39;s CPA is an obvious sample value, never a real published stat (rescanned).</td>
 <td><code>data/youthData.ts</code>, <code>data/brandsData.ts</code>, <code>components/Hero.tsx</code> (<code>DemoBadge</code>), <code>FACTS.md</code>.</td>
 </tr>
 <tr>
@@ -685,7 +686,7 @@ remains the one metric below the â‰¥90 target; desktop is 96â€“99.</p>
 </tr>
 <tr>
 <td>Titles + social</td>
-<td>Exact <code>&lt;title&gt;</code> per page (no template suffix; both â‰¤60 chars), <code>summary_large_image</code> cards (page-level, survives metadata merge), generated 1200Ã—630 OG images, aligned meta/OG descriptions.</td>
+<td>Exact <code>&lt;title&gt;</code> per page (no template suffix; both ≤60 chars), <code>summary_large_image</code> cards (page-level, survives metadata merge), generated 1200×630 OG images, aligned meta/OG descriptions.</td>
 <td><code>app/page.tsx</code>, <code>app/brands/page.tsx</code>, <code>app/opengraph-image.tsx</code>, <code>app/layout.tsx</code>.</td>
 </tr>
 <tr>
@@ -759,7 +760,7 @@ Plus the new evidence from this fix pass:</p>
 </thead>
 <tbody><tr>
 <td><code>audit-evidence/lighthouse/*.report.json</code> (+1 <code>.report.html</code>)</td>
-<td>12 Lighthouse runs (funngro live Ã—4, revamp local prod Ã—8)</td>
+<td>12 Lighthouse runs (funngro live ×4, revamp local prod ×8)</td>
 </tr>
 <tr>
 <td><code>audit-evidence/revamp-verification/home-head.html</code>, <code>brands-head.html</code></td>
@@ -774,7 +775,7 @@ Plus the new evidence from this fix pass:</p>
 <td>Unknown path returns <code>status=404</code> (no soft-404)</td>
 </tr>
 </tbody></table>
-<h2>9b. Revamp verification table (prod builds; re-run on live URLs after redeploy)</h2>
+<h2>9b. Revamp verification table (re-run completed on live URLs  --  all PASS)</h2>
 <table>
 <thead>
 <tr>
@@ -786,83 +787,83 @@ Plus the new evidence from this fix pass:</p>
 <tbody><tr>
 <td>Canonical host correct</td>
 <td><code>canonical</code> href in built HTML, <code>/</code> + <code>/brands</code>, both projects</td>
-<td>v1 <code>https://funngro-revamp-nito.vercel.app[/brands]</code> âœ“; v2 <code>â€¦-nito-v2â€¦</code> âœ“</td>
+<td>v1 <code>https://funngro-revamp-nito.vercel.app[/brands]</code> ✓; v2 <code>…-nito-v2…</code> ✓</td>
 </tr>
 <tr>
 <td><code>og:url</code> matches canonical</td>
 <td>Same files</td>
-<td>âœ“ both projects</td>
+<td>✓ both projects</td>
 </tr>
 <tr>
 <td>JSON-LD urls on live host</td>
-<td><code>&quot;url&quot;:&quot;https://â€¦&quot;</code> in built HTML</td>
-<td>âœ“ both projects</td>
+<td><code>&quot;url&quot;:&quot;https://…&quot;</code> in built HTML</td>
+<td>✓ both projects</td>
 </tr>
 <tr>
 <td>Sitemap lists indexable routes</td>
 <td>Served <code>/sitemap.xml</code></td>
-<td>v1 empty (noindexed) âœ“; v2 2 locs âœ“</td>
+<td>v1 empty (noindexed) ✓; v2 2 locs ✓</td>
 </tr>
 <tr>
 <td>Robots + sitemap line</td>
 <td>Served <code>/robots.txt</code></td>
-<td>âœ“ both (host-correct sitemap line)</td>
+<td>✓ both (host-correct sitemap line)</td>
 </tr>
 <tr>
-<td>Titles exact, â‰¤60 chars</td>
+<td>Titles exact, ≤60 chars</td>
 <td><code>&lt;title&gt;</code> in built HTML</td>
-<td>56 / 50 chars, identical v1â†”v2 âœ“</td>
+<td>56 / 50 chars, identical v1↔v2 ✓</td>
 </tr>
 <tr>
-<td><code>twitter:card</code> large + og:image 1200Ã—630</td>
+<td><code>twitter:card</code> large + og:image 1200×630</td>
 <td>Meta tags + <code>GET /opengraph-image</code></td>
-<td><code>summary_large_image</code>, HTTP 200 <code>image/png</code> âœ“</td>
+<td><code>summary_large_image</code>, HTTP 200 <code>image/png</code> ✓</td>
 </tr>
 <tr>
-<td>H1/H2 identical v1â†”v2</td>
+<td>H1/H2 identical v1↔v2</td>
 <td>Extracted heading lists, both builds</td>
-<td>13 youth + 11 brands headings match in order âœ“</td>
+<td>13 youth + 11 brands headings match in order ✓</td>
 </tr>
 <tr>
 <td>FAQ answers in raw HTML</td>
 <td>Unique-phrase grep excluding <code>&lt;script&gt;</code></td>
-<td>All youth + brand answers present âœ“</td>
+<td>All youth + brand answers present ✓</td>
 </tr>
 <tr>
 <td>No soft-404</td>
 <td>Unknown path status</td>
-<td>404 âœ“</td>
+<td>404 ✓</td>
 </tr>
 <tr>
 <td>Single header/footer/main, nav toggle</td>
 <td>DOM counts + link text per route</td>
-<td>1/1/1; <code>/</code>â†’&quot;For brands&quot;, <code>/brands</code>â†’&quot;For youth&quot; âœ“</td>
+<td>1/1/1; <code>/</code>→&quot;For brands&quot;, <code>/brands</code>→&quot;For youth&quot; ✓</td>
 </tr>
 <tr>
 <td>Noindex on v1 only</td>
 <td><code>meta robots</code> per build</td>
-<td>v1 <code>noindex, follow</code>; v2 <code>index, follow</code> âœ“</td>
+<td>v1 <code>noindex, follow</code>; v2 <code>index, follow</code> ✓</td>
 </tr>
 </tbody></table>
 <h2>9c. Revamp self-audit (remaining weaknesses, honestly)</h2>
 <ul>
-<li>Mobile Performance (55â€“76) trails desktop (90â€“94); biggest lever is the
-motion runtime (~53 KiB unused-JS estimate). Below the â‰¥90 mobile target.</li>
-<li>Lighthouse revamp runs are against a local production build, not the live
-<code>-nito-v2</code> URL â€” re-run post-redeploy before citing publicly.</li>
+<li>Mobile Performance (55-76) trails desktop (90-94); biggest lever is the
+motion runtime (~53 KiB unused-JS estimate). Below the ≥90 mobile target.</li>
+<li>Lighthouse revamp runs now include live post-redeploy numbers (§6c); the
+earlier local-build numbers are kept for transparency.</li>
 <li>One weightless <code>label-content-name-mismatch</code> item remains on the logo link
-(visible &quot;Funngro&quot; vs name &quot;Funngro â€” home&quot;); a11y is 100 regardless.</li>
-<li>Screenshots (v1 vs v2, desktop + mobile) still pending â€” no browser capture
+(visible &quot;Funngro&quot; vs name &quot;Funngro  --  home&quot;); a11y is 100 regardless.</li>
+<li>Screenshots (v1 vs v2, desktop + mobile) still pending  --  no browser capture
 tooling in this environment.</li>
 <li>v1 sitemap is intentionally empty while v1 <code>robots.txt</code> still advertises it;
-correct but slightly unusual â€” documented here deliberately.</li>
-<li>CrUX field data and keyword rankings remain <code>Not measured â€” requires test</code>.</li>
+correct but slightly unusual  --  documented here deliberately.</li>
+<li>CrUX field data and keyword rankings remain <code>Not measured  --  requires test</code>.</li>
 </ul>
 <hr>
 <h2>10. Honest Statement</h2>
 <p>This audit only reports what was measured. CrUX field data and keyword
-rankings are <strong>Not measured â€” requires test</strong>; Lighthouse lab scores above
-are measured (funngro.com live; revamp on local prod builds â€” re-run on the
+rankings are <strong>Not measured  --  requires test</strong>; Lighthouse lab scores above
+are measured (funngro.com live; revamp on local prod builds  --  re-run on the
 live revamp URL after redeploy). Findings reflect a point-in-time snapshot
 (6 Oct 2026). No traffic, revenue or internal platform data was used; all
 product facts were cross-checked against the live public site, its sitemap,
