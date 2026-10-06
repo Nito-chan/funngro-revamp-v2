@@ -93,7 +93,7 @@ export function YouthHero() {
                 </p>
                 <p className="text-sm text-muted">{demoCard.earnedThisWeek.label}</p>
               </div>
-              <span className="sticker animate-float-slow bg-leaf-fill px-3 py-1 text-xs uppercase tracking-wider text-white [--float-rot:3deg]">
+              <span className="sticker animate-float-slow bg-leaf-fill px-3 py-1 text-xs uppercase tracking-wider text-[#0A1F13] [--float-rot:3deg]">
                 ● Live
               </span>
             </div>
@@ -342,7 +342,7 @@ export function LadderSection() {
   return (
     <section
       id="ladder"
-      className="scroll-mt-28 border-y-2 border-ink/10 bg-ink py-16 text-paper md:py-24 dark:bg-cream/10"
+      className="scroll-mt-28 border-y-2 border-ink/10 bg-[#14121F] py-16 text-[#F5F2FF] md:py-24 dark:border-white/10 dark:bg-[#14121F] dark:text-[#F5F2FF]"
       aria-labelledby="ladder-heading"
     >
       <div className="wrap">
@@ -354,7 +354,7 @@ export function LadderSection() {
           >
             {earningsLadder.title}
           </h2>
-          <p className="mt-4 text-base leading-relaxed text-paper/70 md:text-lg dark:text-muted">
+          <p className="mt-4 text-base leading-relaxed text-[#B9B3CC] md:text-lg">
             {earningsLadder.intro}
           </p>
         </div>
@@ -364,7 +364,7 @@ export function LadderSection() {
           {earningsLadder.stages.map((stage, i) => (
             <Reveal as="li" key={stage.id} delay={i * 0.1}>
               <article
-                className="rounded-panel border border-paper/15 bg-paper/[0.06] p-6 backdrop-blur-sm sm:p-7 dark:border-line"
+                className="rounded-panel border border-white/15 bg-white/[0.06] p-6 backdrop-blur-sm sm:p-7"
                 style={{ marginBottom: `${i * 0}px` }}
               >
                 <p className="font-display text-xs font-extrabold uppercase tracking-[0.18em] text-sun">
@@ -383,7 +383,7 @@ export function LadderSection() {
                   />
                 </div>
                 <h3 className="mt-4 font-display text-2xl font-extrabold">{stage.headline}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-paper/70 dark:text-muted">
+                <p className="mt-2 text-sm leading-relaxed text-[#B9B3CC]">
                   {stage.body}
                 </p>
                 <p className="mt-4 font-display text-lg font-extrabold tabular-nums text-sun">
@@ -393,7 +393,7 @@ export function LadderSection() {
                   {stage.tasks.map((task) => (
                     <li
                       key={task}
-                      className="rounded-full border border-paper/20 px-3 py-1 text-xs text-paper/80 dark:border-line dark:text-muted"
+                      className="rounded-full border border-white/20 px-3 py-1 text-xs text-[#D7D2E4]"
                     >
                       {task}
                     </li>
@@ -422,10 +422,10 @@ export function LadderSection() {
             </dd>
           </div>
         </dl>
-        <p className="mt-5 text-sm text-paper/70 dark:text-muted">
+        <p className="mt-5 text-sm text-[#B9B3CC]">
           {earningsLadder.progressionNote}
         </p>
-        <p className="mt-2 text-xs text-paper/50 dark:text-faint">
+        <p className="mt-2 text-xs text-[#8F89A3]">
           {earningsLadder.disclaimer}
         </p>
       </div>
@@ -444,16 +444,16 @@ export function MechanicsSection() {
         title={mechanics.title}
         lead={mechanics.lead}
       />
-      <dl className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {mechanics.items.map((item, i) => (
           <Reveal key={item.name} delay={(i % 4) * 0.06}>
             <div className="card-warm h-full border-t-4 !border-t-coral p-6">
-              <dt className="font-display text-lg font-extrabold">{item.name}</dt>
-              <dd className="mt-2 text-sm leading-relaxed text-muted">{item.body}</dd>
+              <h3 className="font-display text-lg font-extrabold">{item.name}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-muted">{item.body}</p>
             </div>
           </Reveal>
         ))}
-      </dl>
+      </div>
     </section>
   );
 }
@@ -486,20 +486,23 @@ export function ReferralSection() {
             invite, then a percentage that keeps paying.
           </p>
         </Reveal>
-        <dl className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-3" role="list">
           {referral.facts.map((fact, i) => (
             <Reveal key={fact.label} delay={i * 0.07}>
-              <div className="rounded-card bg-primary-ink/12 p-5 backdrop-blur-sm sm:p-6">
-                <dt className="text-xs leading-snug text-primary-ink/75 sm:text-sm">
+              <div
+                role="listitem"
+                className="rounded-card bg-primary-ink/12 p-5 backdrop-blur-sm sm:p-6"
+              >
+                <p className="text-xs leading-snug text-primary-ink/75 sm:text-sm">
                   {fact.label}
-                </dt>
-                <dd className="mt-1 font-display text-2xl font-extrabold tabular-nums sm:text-3xl">
+                </p>
+                <p className="mt-1 font-display text-2xl font-extrabold tabular-nums sm:text-3xl">
                   {fact.value}
-                </dd>
+                </p>
               </div>
             </Reveal>
           ))}
-        </dl>
+        </div>
       </div>
     </section>
   );

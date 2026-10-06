@@ -94,7 +94,10 @@ export function PillNav({ variant }: { variant?: Variant }) {
           <span className="font-display text-base font-extrabold tracking-tight">
             Funngro
           </span>
-          <span className="sticker hidden bg-sun px-2 py-0.5 text-[10px] uppercase tracking-wider text-on-sun sm:inline-flex">
+          <span
+            aria-hidden="true"
+            className="sticker hidden bg-sun px-2 py-0.5 text-[10px] uppercase tracking-wider text-on-sun sm:inline-flex"
+          >
             v2
           </span>
         </Link>
@@ -191,12 +194,18 @@ export function FooterBig() {
   return (
     <footer className="mt-24 border-t-2 border-ink/10 bg-cream/60 dark:bg-card">
       <div className="wrap py-14">
-        <p
+        <div
           aria-hidden="true"
-          className="font-display text-[clamp(3.5rem,12vw,9rem)] font-extrabold leading-none tracking-tight text-ink/10 select-none dark:text-paper/10"
-        >
-          Funngro
-        </p>
+          role="presentation"
+          className="h-[clamp(3.5rem,12vw,9rem)] w-full select-none"
+          style={{
+            backgroundImage:
+              "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='900' height='150' viewBox='0 0 900 150'%3E%3Ctext x='0' y='118' font-family='sans-serif' font-weight='800' font-size='130' letter-spacing='-4' fill='%2314121F' fill-opacity='0.08'%3EFunngro%3C/text%3E%3C/svg%3E\")",
+            backgroundRepeat: "no-repeat",
+            backgroundSize: "contain",
+            backgroundPosition: "left center",
+          }}
+        />
         <div className="mt-6 grid gap-10 lg:grid-cols-[1.2fr_2fr]">
           <div className="max-w-sm">
             <p className="text-sm leading-relaxed text-muted">

@@ -237,11 +237,13 @@ export function VerticalsSection() {
       />
       <ul className="mt-8 flex flex-wrap gap-2.5">
         {verticals.items.map((v, i) => (
-          <Reveal key={v} delay={(i % 6) * 0.04}>
-            <li className="rounded-full border-2 border-ink/10 bg-card px-5 py-2 text-sm font-bold text-ink transition-colors hover:border-coral hover:bg-sun/40">
-              {v}
-            </li>
-          </Reveal>
+          <li key={v}>
+            <Reveal delay={(i % 6) * 0.04}>
+              <span className="block rounded-full border-2 border-ink/10 bg-card px-5 py-2 text-sm font-bold text-ink transition-colors hover:border-coral hover:bg-sun/40">
+                {v}
+              </span>
+            </Reveal>
+          </li>
         ))}
       </ul>
     </section>
