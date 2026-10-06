@@ -1,0 +1,223 @@
+@import "tailwindcss";
+
+/*
+  Funngro revamp v2 — "Sunlit Editorial" design tokens.
+  Light, warm paper theme with indigo ink, coral accents and sunny stickers.
+  Dark mode via prefers-color-scheme using the same token names.
+  Contrast targets: body text >= 4.5:1, large text >= 3:1 (WCAG AA).
+*/
+
+@theme {
+  /* paper surfaces (light default) */
+  --color-paper: #faf7f2;
+  --color-card: #ffffff;
+  --color-cream: #f1ece3;
+  --color-sand: #e7ddcb;
+
+  /* ink + secondary text */
+  --color-ink: #14121f;
+  --color-muted: #5e5a6b;
+  --color-faint: #6b6577;
+
+  /* brand accents */
+  --color-primary: #4f46e5;
+  --color-primary-deep: #3730a3;
+  --color-primary-ink: #ffffff;
+  --color-coral: #ff6b4a;
+  --color-on-coral: #14121f;
+  --color-sun: #ffd84d;
+  --color-on-sun: #14121f;
+  --color-leaf: #0b7a45;
+  --color-leaf-fill: #12b76a;
+
+  /* lines */
+  --color-line: #e4dccc;
+  --color-line-strong: #d3c8b2;
+
+  /* type */
+  --font-display: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+
+  /* radii */
+  --radius-card: 18px;
+  --radius-panel: 26px;
+
+  /* motion */
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --animate-marquee: marquee 36s linear infinite;
+  --animate-float-slow: float-slow 8s ease-in-out infinite;
+  --animate-spin-slow: spin 14s linear infinite;
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translateY(0) rotate(var(--float-rot, 0deg));
+  }
+  50% {
+    transform: translateY(-10px) rotate(var(--float-rot, 0deg));
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  @theme {
+    --color-paper: #131022;
+    --color-card: #1d1930;
+    --color-cream: #262142;
+    --color-sand: #322c4e;
+    --color-ink: #f5f2ff;
+    --color-muted: #b7b1c9;
+    --color-faint: #9a94b2;
+    --color-primary: #8b93ff;
+    --color-primary-deep: #a5b4fc;
+    --color-primary-ink: #14121f;
+    --color-coral: #ff8a6b;
+    --color-on-coral: #14121f;
+    --color-sun: #ffd84d;
+    --color-on-sun: #14121f;
+    --color-leaf: #4ade80;
+    --color-leaf-fill: #12b76a;
+    --color-line: #322c4e;
+    --color-line-strong: #453c68;
+  }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background: var(--color-sun);
+    color: var(--color-on-sun);
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-primary);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+}
+
+@layer utilities {
+  .wrap {
+    margin-inline: auto;
+    width: 100%;
+    max-width: 76rem;
+    padding-inline: 1.25rem;
+  }
+
+  @media (min-width: 640px) {
+    .wrap {
+      padding-inline: 2rem;
+    }
+  }
+
+  /* small uppercase kicker with a coral tick */
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-primary-deep);
+  }
+
+  .eyebrow::before {
+    content: "";
+    width: 1.5rem;
+    height: 0.2rem;
+    border-radius: 999px;
+    background: var(--color-coral);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .eyebrow {
+      color: var(--color-primary);
+    }
+  }
+
+  /* hand-drawn wavy underline for hero words */
+  .squiggle {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='12' viewBox='0 0 120 12'%3E%3Cpath d='M2 8 Q 12 2, 22 7 T 42 7 T 62 7 T 82 7 T 102 7 T 122 7' fill='none' stroke='%23FF6B4A' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    background-size: 100% 0.32em;
+    padding-bottom: 0.1em;
+  }
+
+  .card-warm {
+    background-color: var(--color-card);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+    box-shadow: 0 1px 0 var(--color-line), 0 18px 34px -28px rgb(20 18 31 / 0.35);
+  }
+
+  .sticker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    border-radius: 999px;
+    font-family: var(--font-display);
+    font-weight: 700;
+    transform: rotate(-2deg);
+  }
+
+  .mask-fade-x {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      black 8%,
+      black 92%,
+      transparent
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      black 8%,
+      black 92%,
+      transparent
+    );
+  }
+
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    animation-delay: 0ms !important;
+  }
+}
